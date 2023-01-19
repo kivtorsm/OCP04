@@ -132,17 +132,10 @@ class PlayerList:
         except json.JSONDecodeError as error:
             print(error)
             with open(self.file_path, "w") as file:
-                player_json_obj = player.to_json()
-                # print(f"json str {player_json_str}")
-                # print(f"json str type{type(player_json_str)}")
-                # player_json_obj = json.loads(player_json_str)
-                print(f"player json obj {player_json_obj}")
-                print(f"player json obj type {type(player_json_obj)}")
-                self.player_list.append(player_json_obj)
-                print(f"player list type {type(self.player_list)}")
+                # Initialising player list
+                # Json main object will be player list with list of players inside
+                self.player_list.append(player.to_json())
                 self.player_dict = {"player_list": self.player_list}
-                print(f"player dict {self.player_dict}")
-                print(f"player dict type {type(self.player_dict)}")
                 json.dump(self.player_dict, file, indent=4, cls=MyEncoder)
 
 
