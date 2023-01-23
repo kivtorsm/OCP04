@@ -35,8 +35,8 @@ def main():
     ]
 
     # Erase tournament data
-    with open(tournoi.file_path, 'w'):
-        pass
+    tournoi.erase_file_data()
+    liste_joueurs.erase_file_data()
 
     for player in player_list_data:
         first_name = player['first_name']

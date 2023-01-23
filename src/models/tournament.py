@@ -19,7 +19,8 @@ class Tournament:
         self.description = description
         self.round_list = []
         self.player_list = []
-        self.file_path = os.path.abspath(f"../data/{self.name}.json")
+        self.file_path = os.path.abspath(f"../../data/{self.name}.json")
+        # TODO : adapt depending on execution
         self.player_list = []
         self.file_data = {"player_list": self.player_list}
 
@@ -28,3 +29,7 @@ class Tournament:
 
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
+
+    def erase_file_data(self):
+        with open(self.file_path, 'w'):
+            pass

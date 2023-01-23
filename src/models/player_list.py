@@ -7,7 +7,7 @@ from json import JSONEncoder
 
 class PlayerList:
     def __init__(self):
-        self.file_path = os.path.abspath("../data/players.json")
+        self.file_path = os.path.abspath("../../data/players.json")
         self.player_list = []
         self.file_data = {"player_list": self.player_list}
 
@@ -67,6 +67,10 @@ class PlayerList:
         self.player_list = self.get_player_list_from_json()
         self.player_list.append(player)
         return self.player_list
+
+    def erase_file_data(self):
+        with open(self.file_path, 'w'):
+            pass
 
 
 class MyEncoder(JSONEncoder):
