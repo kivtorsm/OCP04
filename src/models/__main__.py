@@ -36,8 +36,6 @@ def create_tournament():
     ]
 
     def sign_in_players():
-        player_list = PlayerList()
-        player_list.erase_file_data()
         for player in player_list_data:
             first_name = player['first_name']
             last_name = player['last_name']
