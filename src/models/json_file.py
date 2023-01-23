@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import json
+from json import JSONEncoder
 
 
 class Json:
@@ -11,4 +12,10 @@ class Json:
         return json.dumps(obj, default=lambda o: o.__dict__, indent=4)
 
 
-
+class MyEncoder(JSONEncoder):
+    """"
+    Returns dictionary with data in JSON format
+    """
+    def default(self, o):
+        return o.__dict__
+# ça ne sert pas vraiment ?

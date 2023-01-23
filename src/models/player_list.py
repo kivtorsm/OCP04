@@ -2,7 +2,7 @@
 
 import os
 import json
-from json import JSONEncoder
+from json_file import MyEncoder
 
 
 class PlayerList:
@@ -32,7 +32,6 @@ class PlayerList:
         """
 
         try:
-            self.player_list = self.get_player_list_from_json()
             self.append_player_to_list(player)
             self.file_data['player_list'] = self.player_list
 
@@ -54,7 +53,6 @@ class PlayerList:
             return self.player_list
         except json.JSONDecodeError:
             # In cas of empty file, we return the empty player list
-            print('fichier vide')
             return self.player_list
         except FileNotFoundError:
             print(f'fichier {self.file_path} inexistant')
@@ -73,10 +71,3 @@ class PlayerList:
             pass
 
 
-class MyEncoder(JSONEncoder):
-    """"
-    Returns dictionary with data in JSON format
-    """
-    def default(self, o):
-        return o.__dict__
-# ça ne sert pas vraiment ?

@@ -19,5 +19,9 @@ class Player:
     def to_json(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
-    def sign_in_player(self, player_list):
-        player_list.update_json(self)
+    def sign_in_player(self, tournament):
+        tournament.sign_in_player(self)
+
+    def player_to_player_dict(self):
+        player_dict = {self.national_chess_identifier: self}
+        return player_dict

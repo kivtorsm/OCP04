@@ -10,7 +10,6 @@ class Round:
         self.start_datetime = datetime.datetime.now()
         self.end_datetime = 0
         self.match_list = []
-        self.match_couples = []
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)

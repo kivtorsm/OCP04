@@ -4,9 +4,10 @@ from player_list import PlayerList
 from player import Player
 
 
-def main():
-    tournoi = Tournament("OC", "Toulouse", "20/01/2023", "27/01/2023", "description")
-    liste_joueurs = PlayerList()
+def create_tournament():
+    tournament = Tournament("OC", "Toulouse", "20/01/2023", "27/01/2023", "description")
+    tournament.erase_file_data()
+    tournament.write_json_file()
     player_list_data = [
         {
             'first_name': 'Samuel',
@@ -34,18 +35,26 @@ def main():
         }
     ]
 
-    # Erase tournament data
-    tournoi.erase_file_data()
-    liste_joueurs.erase_file_data()
+    def sign_in_players():
+        player_list = PlayerList()
+        player_list.erase_file_data()
+        for player in player_list_data:
+            first_name = player['first_name']
+            last_name = player['last_name']
+            birth_date = player['birth_date']
+            national_chess_identifier = player['national_chess_identifier']
+            new_player = Player(first_name, last_name, birth_date, national_chess_identifier)
+            tournament.sign_in_player(new_player)
 
-    for player in player_list_data:
-        first_name = player['first_name']
-        last_name = player['last_name']
-        birth_date = player['birth_date']
-        national_chess_identifier = player['national_chess_identifier']
-        new_player = Player(first_name, last_name, birth_date, national_chess_identifier)
-        print(new_player)
-        new_player.sign_in_player(liste_joueurs)
+    sign_in_players()
+
+    return tournament
+
+
+def main():
+    # Create data
+    tournament = create_tournament()
+    print(tournament)
 
 
 if __name__ == "__main__":
