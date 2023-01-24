@@ -41,6 +41,14 @@ class Tournament:
         """
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
+    def increase_round_number(self):
+        """
+        Increases the current round count
+        :return: None
+        :rtype: Nonve
+        """
+        self.current_round =+ 1
+
     def erase_file_data(self):
         """
         Erases tournament json file data
@@ -170,7 +178,7 @@ class Tournament:
         # create round object
         tournament_round = Round(round_number)
         # update round with json data
-        tournament_round.update_round_data(self, round_number)
+        tournament_round.download_round_data(self, round_number)
         # update round with input match_list
         tournament_round.initialize_match_list(self, match_list)
         # update tournament with round object
@@ -189,4 +197,15 @@ class Tournament:
         round_data = self.round_list[round_number-1]
         return round_data
 
+    def get_round_match_list(self, round_number):
+        """
+        Returns the match list from a specific round
+        :param round_number: the round number for which we want the list of matches
+        :type round_number: int
+        :return: list of matches for a specified round
+        :rtype: list
+        """
+        tournament_round = Round(round_number)
+        match_list = tournament_round.get_match_list(self, round_number)
+        return match_list
 
