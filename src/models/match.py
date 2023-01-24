@@ -11,8 +11,10 @@ class Match:
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
     def to_json(self):
+        """
+        Returns object as a json string
+        :return: object as json string
+        :rtype: str
+        """
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
-
-    def set_score(self, score_player1, score_player2):
-        self.match_data = (score_player1, score_player2)
 
