@@ -12,6 +12,7 @@ class Player:
         self.last_name = last_name
         self.birth_date = birth_date
         self.national_chess_identifier = national_chess_identifier
+        self.score = 0
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
@@ -22,6 +23,4 @@ class Player:
     def sign_in_player(self, tournament):
         tournament.sign_in_player(self)
 
-    def player_to_player_dict(self):
-        player_dict = {self.national_chess_identifier: self}
-        return player_dict
+

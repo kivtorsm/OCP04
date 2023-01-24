@@ -5,11 +5,7 @@ import json
 
 class Match:
     def __init__(self, player1, player2):
-        score_player1 = [player1]
-        score_player2 = [player2]
-        self.match_data = (score_player1, score_player2)
-        # Commenter
-        pass
+        self.match_data = tuple((player1, player2))
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
