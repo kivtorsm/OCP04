@@ -25,7 +25,7 @@ class Tournament:
             tournament_round = Round(round_number + 1)
             self.round_list.append(tournament_round)
         self.player_dict = {}
-        self.file_path = os.path.abspath(f"../../data/{self.name}.json")
+        self.file_path = os.path.abspath(f"../data/{self.name}.json")
         # TODO : adapt depending on execution
 
     def __str__(self):
@@ -182,7 +182,7 @@ class Tournament:
         # update round with input match_list
         tournament_round.initialize_match_list(self, match_list)
         # update tournament with round object
-        self.round_list[round_number-1] = tournament_round
+        self.round_list[round_number-1] = json.loads(tournament_round.to_json())
         # update json file
         self.write_json_file()
 
