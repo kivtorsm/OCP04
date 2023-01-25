@@ -13,6 +13,7 @@ class Player:
         self.birth_date = birth_date
         self.national_chess_identifier = national_chess_identifier
         self.score = 0
+        self.has_played = []
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
