@@ -2,3 +2,4 @@
 env/
 data/
 tmp/
+__pycache__
