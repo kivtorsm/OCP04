@@ -5,6 +5,7 @@ import json
 
 from json_file import MyEncoder
 from round import Round
+from match import Match
 
 
 class Tournament:
@@ -99,7 +100,22 @@ class Tournament:
                 self.total_rounds = file_data['total_rounds']
                 self.current_round = file_data['current_round']
                 self.description = file_data['description']
-                self.round_list = file_data['round_list']
+                self.round_list = []
+                for json_round in file_data['round_list']:
+                    # Get round number for each item of the round list
+                    round_number = json_round['round_number']
+                    # Initialise round object for each item of the round list
+                    tournament_round = Round(round_number + 1)
+                    # Set object attributes
+                    tournament_round.name = json_round['name']
+                    tournament_round.start_datetime = json_round['start_datetime']
+                    tournament_round.end_datetime = json_round['end_datetime']
+                    # For each match in the json file create object Match and append to match list
+                    for json_match in json_round['match_list']:
+                        match = Match(json_match[0], json_match[1])
+                        tournament_round.match_list.append(match)
+                    # Append round to round list in tournament
+                    self.round_list.append(tournament_round)
                 self.player_dict = file_data['player_dict']
             return file_data
         except json.JSONDecodeError:
@@ -164,7 +180,7 @@ class Tournament:
         self.get_data_from_json_file()
         return self.round_list
 
-    def update_round_match_list(self, round_number, match_list):
+    def update_json_round_match_list(self, round_number, match_list):
         """
         Updates the list of matches of a given round with a new given list of matches
         :param round_number: the round number where to update the list of matches
@@ -178,15 +194,13 @@ class Tournament:
         # create round object
         tournament_round = Round(round_number)
         # update round with json data
-        tournament_round.download_round_data(self, round_number)
-        # update round with input match_list
         tournament_round.initialize_match_list(self, match_list)
         # update tournament with round object
-        self.round_list[round_number-1] = json.loads(tournament_round.to_json())
+        self.round_list[round_number-1] = tournament_round
         # update json file
         self.write_json_file()
 
-    def get_round_data(self, round_number):
+    def get_round(self, round_number):
         """
         Returns a given round data
         :param round_number: number of the round for which to get the data
@@ -194,8 +208,8 @@ class Tournament:
         :return: round data
         :rtype: dict
         """
-        round_data = self.round_list[round_number-1]
-        return round_data
+        tournament_round = self.round_list[round_number-1]
+        return tournament_round
 
     def get_round_match_list(self, round_number):
         """

@@ -41,26 +41,6 @@ class Round:
         """
         self.end_datetime = datetime.datetime.now().isoformat()
 
-    def download_round_data(self, tournament, round_number):
-        """
-        Updates the round data with the given round of a tournament data
-        :param tournament: tournament from which we get the data
-        :type tournament: tournament
-        :param round_number: round number data to be updated
-        :type round_number: int
-        :return: None
-        :rtype: None
-        """
-        # Get round data from JSON file
-        round_data = tournament.get_round_data(round_number)
-        print(type(round_data))
-        print(round_data)
-        self.round_number = round_data['round_number']
-        self.name = round_data['name']
-        self.match_list = round_data['match_list']
-        self.end_datetime = round_data['end_datetime']
-        self.start_datetime = round_data['start_datetime']
-
     def initialize_match_list(self, tournament, match_list):
         """
         Initializes the match list in the round object
@@ -84,5 +64,4 @@ class Round:
         :return: list of matches
         :rtype: list
         """
-        self.download_round_data(tournament, round_number)
         return self.match_list

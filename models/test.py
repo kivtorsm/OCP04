@@ -98,7 +98,7 @@ def initialize_round1(tournament):
     # Create randon pair list
     pair_list = set_pair_list_random(tournament)
     # Update the match list in the 1st round of the tournament
-    tournament.update_round_match_list(1, pair_list)
+    tournament.update_json_round_match_list(1, pair_list)
     # Increase round number
     tournament.increase_round_number()
 
