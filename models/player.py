@@ -12,7 +12,7 @@ class Player:
         self.last_name = last_name
         self.birth_date = birth_date
         self.national_chess_identifier = national_chess_identifier
-        self.score = 0
+        self.score = float(0)
         self.has_played = []
 
     def __str__(self):
@@ -25,4 +25,30 @@ class Player:
         """
         tournament.sign_in_player(self)
 
+    def set_score(self, score: float):
+        """
+        Updates player score after a match
+        :param score: score number to be added to the player total score
+        :type score: float
+        :return: None
+        :rtype: None
+        """
+        self.score += score
+
+    def set_has_played(self, player):
+        """
+        Updates the list of played players after a match
+        :param player: last match's opponent to be added to the list
+        :type player: Player
+        :return: None
+        :rtype: None
+        """
+        if len(self.has_played) == 0:
+            self.has_played.append(player.national_chess_identifier)
+        else:
+            for played_player in self.has_played:
+                if played_player == player.national_chess_identifier:
+                    pass
+            else:
+                self.has_played.append(player.national_chess_identifier)
 

@@ -211,33 +211,48 @@ class Tournament:
         tournament_round = self.round_list[round_number-1]
         return tournament_round.match_list
 
-    def set_score(self, round_number, match_number, player1, player2):
+    def set_score(self, round_number, match_number, score_player1, score_player2):
         """
         Updates a given match score in a given round as well as concerned players' scores
         :param round_number: ongoing round number
         :type round_number: int
         :param match_number: played match number
         :type match_number: int
-        :param player1: 2-elements list containing [player national_chess_ID: str, score: float]
-        :type player1: list
-        :param player2: 2-elements list containing [player nationa_chess_ID: str, score: float]
-        :type player2: list
+        :param score_player1: 2-elements list containing [player national_chess_ID: str, score: float]
+        :type score_player1: list
+        :param score_player2: 2-elements list containing [player nationa_chess_ID: str, score: float]
+        :type score_player2: list
         :return: None
         :rtype: None
         """
         # saving Round object in variable
         tournament_round = self.round_list[round_number-1]
+
         # saving match object invariable
         match = tournament_round.match_list[match_number-1]
+
         # setting match players' score
-        match.set_score(player1, player2)
+        match.set_score(score_player1, score_player2)
+
         # updating the match in the round match list
         tournament_round.match_list[match_number-1] = match
+
         # updating the round in the tournament round list
         self.round_list[round_number-1] = tournament_round
+
         # updating the player's score
-        national_chess_ID_player1 = player1[0]
-        national_chess_ID_player2 = player2[0]
+        national_chess_id_player1 = score_player1[0]
+        score1 = score_player1[1]
+        national_chess_id_player2 = score_player2[0]
+        score2 = score_player2[1]
+        player1 = self.player_dict[national_chess_id_player1]
+        player2 = self.player_dict[national_chess_id_player2]
+        player1.set_score(score1)
+        player2.set_score(score2)
+
+        # updating player's opponent "has_played" list
+        player1.set_has_played(player2)
+        player2.set_has_played(player1)
 
         # updating the json file
         self.update_json_file()

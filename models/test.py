@@ -106,7 +106,6 @@ def initialize_round1(tournament):
 def play_round1(tournament: Tournament):
     round_number = 1
     match_list = tournament.get_round_match_list(round_number)
-    print(match_list)
     scores_list = [1, 0.5, 0.5, 0]
     for match_number in range(len(match_list)):
         match = match_list[match_number-1]
@@ -114,9 +113,7 @@ def play_round1(tournament: Tournament):
         score_player2 = match.match_data[1]
         score_player1[1] = scores_list[match_number-1]
         score_player2[1] = scores_list[match_number+1]
-        print(score_player1)
-        print(score_player2)
-        tournament.set_match_score(round_number, match_number, score_player1, score_player2)
+        tournament.set_score(round_number, match_number, score_player1, score_player2)
 
 
 def main():
