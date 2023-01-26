@@ -14,7 +14,7 @@ def create_tournament():
     """
     tournament = Tournament("OC", "Toulouse", "20/01/2023", "27/01/2023", "description")
     tournament.erase_file_data()
-    tournament.write_json_file()
+    tournament.update_json_file()
     return tournament
 
 
@@ -98,15 +98,26 @@ def initialize_round1(tournament):
     # Create randon pair list
     pair_list = set_pair_list_random(tournament)
     # Update the match list in the 1st round of the tournament
-    tournament.update_json_round_match_list(1, pair_list)
+    tournament.set_round_match_list(1, pair_list)
     # Increase round number
     tournament.increase_round_number()
 
 
-def play_round1(tournament):
-    match_list = tournament.get_round_match_list(1)
-    for match in match_list:
-        print(match)
+def play_round1(tournament: Tournament):
+    round_number = 1
+    match_list = tournament.get_round_match_list(round_number)
+    print(match_list)
+    scores_list = [1, 0.5, 0.5, 0]
+    for match_number in range(len(match_list)):
+        match = match_list[match_number-1]
+        score_player1 = match.match_data[0]
+        score_player2 = match.match_data[1]
+        score_player1[1] = scores_list[match_number-1]
+        score_player2[1] = scores_list[match_number+1]
+        print(score_player1)
+        print(score_player2)
+        tournament.set_match_score(round_number, match_number, score_player1, score_player2)
+
 
 def main():
     tournament = create_tournament()

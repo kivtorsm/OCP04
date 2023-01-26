@@ -18,3 +18,5 @@ class Match:
         """
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
+    def set_score(self, player1, player2):
+        self.match_data = tuple((player1, player2))

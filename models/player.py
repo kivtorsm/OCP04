@@ -18,13 +18,6 @@ class Player:
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
-    def to_json(self):
-        """
-        :return: object as json string
-        :rtype: str
-        """
-        return json.dumps(self, default=lambda o: o.__dict__, indent=4)
-
     def sign_in_player(self, tournament):
         """
         Calls tournament sign-in player method. It allows to double-way sign-in player, either
