@@ -6,6 +6,7 @@ import json
 from json_file import MyEncoder
 from round import Round
 from match import Match
+from player import Player
 
 
 class Tournament:
@@ -73,10 +74,10 @@ class Tournament:
         :return: None
         :rtype: None
         """
-        self.add_player_to_player_dict(player)
+        self.player_dict[player.national_chess_identifier] = player
         self.update_json_file()
 
-    def get_data_from_json_file(self):
+    def set_tournament_data_from_json_file(self):
         """
         Updates tournament object with json file data and returns it as an object
         :return: file_data
@@ -105,28 +106,23 @@ class Tournament:
                     # For each match in the json file create object Match and append to match list
                     for json_match in json_round['match_list']:
                         match = Match(json_match[0], json_match[1])
+                        # Append match to the tournament round
                         tournament_round.match_list.append(match)
                     # Append round to round list in tournament
                     self.round_list.append(tournament_round)
-                self.player_dict = file_data['player_dict']
-            return file_data
+                # save players dict
+                for key, value in file_data['player_dict'].items():
+                    # value = player dictionary
+                    # create player object
+                    player = Player(value['first_name'], value['last_name'], value['birth_date'],
+                                    value['national_chess_identifier'])
+                    # add player to the tournament player dict
+                    self.player_dict[key] = player
         except json.JSONDecodeError:
             # In case of empty file, we return the empty player list
             print('fichier vide')
-            return None
         except FileNotFoundError:
             print(f'fichier {self.file_path} inexistant')
-            return None
-
-    def add_player_to_player_dict(self, player):
-        """
-        Adds player to the tournament player dict
-        :param player: player to be added to the tournament
-        :type player: player
-        :return: None
-        :rtype: None
-        """
-        self.player_dict[player.national_chess_identifier] = player
 
     def get_number_of_players(self):
         """
@@ -159,7 +155,6 @@ class Tournament:
         :return: list of signed-in players
         :rtype: list
         """
-        # self.get_player_dict_from_json()
         player_list = list(self.player_dict.keys())
         return player_list
 
@@ -169,7 +164,7 @@ class Tournament:
         :return: list of rounds to be played in the tournament
         :rtype: list
         """
-        self.get_data_from_json_file()
+        self.set_tournament_data_from_json_file()
         return self.round_list
 
     def set_round_match_list(self, round_number, match_list):
@@ -182,7 +177,9 @@ class Tournament:
         :return: None
         :rtype: None
         """
-        self.get_data_from_json_file()
+        self.set_tournament_data_from_json_file()
+        # TODO : a-t-on besoin de charger les données depuis le fichier
+        #  json à chaque get ou une seule fois à l'ouverture du programme ?
         # create round object
         tournament_round = Round(round_number)
         # update round with json data
@@ -192,7 +189,7 @@ class Tournament:
         # update json file
         self.update_json_file()
 
-    def get_round(self, round_number):
+    def get_round(self, round_number) -> Round:
         """
         Returns a given round data
         :param round_number: number of the round for which to get the data
@@ -203,7 +200,7 @@ class Tournament:
         tournament_round = self.round_list[round_number-1]
         return tournament_round
 
-    def get_round_match_list(self, round_number):
+    def get_round_match_list(self, round_number) -> list:
         """
         Returns the match list from a specific round
         :param round_number: the round number for which we want the list of matches
@@ -214,9 +211,9 @@ class Tournament:
         tournament_round = self.round_list[round_number-1]
         return tournament_round.match_list
 
-    def set_match_score(self, round_number, match_number, player1, player2):
+    def set_score(self, round_number, match_number, player1, player2):
         """
-        Updates a given match score in a given round
+        Updates a given match score in a given round as well as concerned players' scores
         :param round_number: ongoing round number
         :type round_number: int
         :param match_number: played match number
@@ -238,4 +235,10 @@ class Tournament:
         tournament_round.match_list[match_number-1] = match
         # updating the round in the tournament round list
         self.round_list[round_number-1] = tournament_round
+        # updating the player's score
+        national_chess_ID_player1 = player1[0]
+        national_chess_ID_player2 = player2[0]
+
+        # updating the json file
         self.update_json_file()
+
