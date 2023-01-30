@@ -128,6 +128,15 @@ class ProgramData:
         player = self.player_dict[national_chess_identifier]
         return player
 
+    def is_player_in_database(self, national_chess_identifier: str):
+        player_list = self.player_dict.keys()
+        result = False
+        for player in player_list:
+            if player == national_chess_identifier:
+                result = True
+        return result
+
+
 class MyEncoder(JSONEncoder):
     """"
     Returns dictionary with data in JSON format

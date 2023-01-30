@@ -205,6 +205,7 @@ def main():
     sign_in_players(current_tournament, program_file)
     initialize_round1(current_tournament)
     play_round1(current_tournament, program_file)
+    print(program_file.is_player_in_database('AB12345'))
 
 
 if __name__ == "__main__":
