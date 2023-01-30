@@ -3,7 +3,7 @@
 import json
 import datetime
 
-from match import Match
+from models.match import Match
 
 
 class Round:
@@ -16,12 +16,6 @@ class Round:
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
-
-    # def __getitem__(self, index):
-    #     return self.item[index]
-    #
-    # def __setitem__(self, index, item):
-    #     self.item[index] = item
 
     def to_json(self):
         """
