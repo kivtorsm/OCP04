@@ -104,7 +104,7 @@ class Tournament:
         # create round object
         tournament_round = Round(round_number)
         # update round with json data
-        tournament_round.initialize_match_list(self, match_list)
+        tournament_round.set_match_list(self, match_list)
         # update tournament with round object
         self.round_list[round_number - 1] = tournament_round
 
