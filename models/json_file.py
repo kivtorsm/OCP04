@@ -1,8 +1,6 @@
 # coding: utf-8
 
 import json
-from json import JSONEncoder
-import os
 
 from models.tournament import Tournament
 from models.round import Round
@@ -14,9 +12,9 @@ class ProgramData:
     """
     Tournament manger JSON data management.
     """
-    def __init__(self):
+    def __init__(self, program_file_path):
         # JSON file path. To be executed from project root
-        self.file_path = os.path.abspath(f"./data/tournament_manager.json")
+        self.file_path = program_file_path
         self.ongoing_tournament = False
         self.player_dict = {}
         self.tournament_list = []
@@ -65,7 +63,7 @@ class ProgramData:
         self.player_dict[player.national_chess_identifier] = player
         self.update_json_file()
 
-    def update_data_object_from_json(self, position=0):
+    def update_data_object_from_json(self):
         """
         Updates tournament object with json file data and returns it as an object
         :return: None
@@ -77,7 +75,9 @@ class ProgramData:
                 self.file_path = file_data['file_path']
                 self.ongoing_tournament = file_data['ongoing_tournament']
                 file_tournament_list = file_data['tournament_list']
-                player_list = list(self.player_dict.keys())
+                player_dict = file_data['player_dict']
+                print(player_dict)
+                print(type(player_dict))
                 for tournament_data in file_tournament_list:
                     tournament_name = tournament_data['name']
                     tournament_place = tournament_data['place']
@@ -113,9 +113,15 @@ class ProgramData:
                         tournament.round_list.append(tournament_round)
                     # save players list
                     tournament.player_list = tournament_data['player_list']
-                for player_data in player_list:
-                    player = Player(player_data['first_name'], player_data['last_name'], player_data['birth_date'],
-                                    player_data['national_chess_identifier'])
+                    # append tournament to tournament program file
+                    self.tournament_list.append(tournament)
+
+                # parse player_dict values in order to create player objects and add them to the program file
+                for value in player_dict.values():
+                    print(value)
+                    player = Player(value['first_name'], value['last_name'], value['birth_date'],
+                                    value['national_chess_identifier'])
+                    # create dict entry with player object
                     self.player_dict[player.national_chess_identifier] = player
 
         except json.JSONDecodeError:
@@ -137,7 +143,7 @@ class ProgramData:
         return result
 
 
-class MyEncoder(JSONEncoder):
+class MyEncoder(json.JSONEncoder):
     """"
     Returns dictionary with data in JSON format
     """
