@@ -1,14 +1,22 @@
 # coding: utf-8
 
 import random
+import os
 
 from models.tournament import Tournament
 from models.player import Player
 from models.json_file import ProgramData
 
+PROGRAM_FILE_PATH = os.path.abspath(f"./data/chess_tournament_manager.json")
+
 
 def set_up():
-    program_file = ProgramData()
+    """
+    Sets-up the program data
+    :return: programData object with all initialized data
+    :rtype: ProgramData
+    """
+    program_file = ProgramData(PROGRAM_FILE_PATH)
     program_file.erase_file_data()
     tournament_list_data = [
         {
@@ -186,6 +194,15 @@ def initialize_round1(tournament: Tournament):
 
 
 def play_round1(tournament: Tournament, program_file: ProgramData):
+    """
+    Simulates playing round 1
+    :param tournament: tournament played
+    :type tournament: Tournament
+    :param program_file: program file containing the program data
+    :type program_file: ProgramData
+    :return: None
+    :rtype: None
+    """
     round_number = 1
     match_list = tournament.get_round_match_list(round_number)
     scores_list = [1, 0.5, 0.5, 0]

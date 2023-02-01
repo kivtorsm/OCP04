@@ -47,8 +47,6 @@ class ProgramData:
 
     def add_new_tournament(self, tournament: Tournament):
         self.tournament_list.insert(0, tournament)
-        for tournament in self.tournament_list:
-            print(tournament)
         self.ongoing_tournament = True
         self.update_json_file()
 
@@ -76,8 +74,6 @@ class ProgramData:
                 self.ongoing_tournament = file_data['ongoing_tournament']
                 file_tournament_list = file_data['tournament_list']
                 player_dict = file_data['player_dict']
-                print(player_dict)
-                print(type(player_dict))
                 for tournament_data in file_tournament_list:
                     tournament_name = tournament_data['name']
                     tournament_place = tournament_data['place']
@@ -118,7 +114,6 @@ class ProgramData:
 
                 # parse player_dict values in order to create player objects and add them to the program file
                 for value in player_dict.values():
-                    print(value)
                     player = Player(value['first_name'], value['last_name'], value['birth_date'],
                                     value['national_chess_identifier'])
                     # create dict entry with player object
