@@ -137,6 +137,10 @@ class ProgramData:
                 result = True
         return result
 
+    def update_ongoing_tournament(self, tournament: Tournament):
+        self.tournament_list[0] = tournament
+        self.update_json_file()
+
 
 class MyEncoder(json.JSONEncoder):
     """"

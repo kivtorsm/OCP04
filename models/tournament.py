@@ -4,6 +4,7 @@ import json
 import os
 
 from models.round import Round
+from models.json_file import ProgramData
 
 
 class Tournament:
@@ -11,8 +12,8 @@ class Tournament:
     Player list contained in JSON file
     """
 
-    def __init__(self, name, place, start_date, end_date, description, player_list, rounds=4,
-                 status="signing-in players", current_round=0, program_json_file="./data/tournament_manager.json"):
+    def __init__(self, name, place, start_date, end_date, description, player_list=[], rounds=4,
+                 status="signing-in players", current_round=0):
 
         self.name = name
         self.place = place
@@ -39,15 +40,15 @@ class Tournament:
         """
         self.current_round += 1
 
-    def sign_in_player(self, player):
+    def sign_in_player(self, national_chess_identifier: str):
         """
         Signs-in the tournament a given player
-        :param player: player to be signed-in the tournament
-        :type player: player
+        :param national_chess_identifier: national chess identifier of the player to be signed-in
+        :type national_chess_identifier: str
         :return: None
         :rtype: None
         """
-        self.player_list.append(player.national_chess_identifier)
+        self.player_list.append(national_chess_identifier)
 
     def get_number_of_players(self):
         """
@@ -130,9 +131,11 @@ class Tournament:
         tournament_round = self.round_list[round_number - 1]
         return tournament_round.match_list
 
-    def set_score(self, round_number, match_number, score_player1, score_player2, program_data):
+    def set_score(self, round_number: int, match_number: int, score_player1: list, score_player2: list, program_data: ProgramData):
         """
         Updates a given match score in a given round as well as concerned players' scores
+        :param program_data: program current data
+        :type program_data: ProgramData
         :param round_number: ongoing round number
         :type round_number: int
         :param match_number: played match number

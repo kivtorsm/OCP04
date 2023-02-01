@@ -99,9 +99,9 @@ def create_tournament():
     """
     Creates tournament with test data
     :return: tournament object
-    :rtype: object
+    :rtype: Tournament
     """
-    tournament = Tournament("OC", "Toulouse", "20/01/2023", "27/01/2023", "description", player_list=[])
+    tournament = Tournament("OC", "Toulouse", "20/01/2023", "27/01/2023", "description")
     return tournament
 
 
@@ -147,11 +147,11 @@ def sign_in_players(tournament: Tournament, data_file: ProgramData):
         birth_date = player['birth_date']
         national_chess_identifier = player['national_chess_identifier']
         new_player = Player(first_name, last_name, birth_date, national_chess_identifier)
-        tournament.sign_in_player(new_player)
+        tournament.sign_in_player(new_player.national_chess_identifier)
         data_file.add_player(new_player)
 
 
-def set_pair_list_random(tournament):
+def set_pair_list_random(tournament: Tournament):
     """
     Shuffles participant list and creates random pairs returned as a list of pairs to play each other
     :param tournament: a given tournament for which we want to create random pairs
@@ -222,7 +222,6 @@ def main():
     sign_in_players(current_tournament, program_file)
     initialize_round1(current_tournament)
     play_round1(current_tournament, program_file)
-    print(program_file.is_player_in_database('AB12345'))
 
 
 if __name__ == "__main__":
