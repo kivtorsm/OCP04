@@ -1,14 +1,14 @@
 
 
 class View:
-    def program_file_created(self, path):
-        print(f"Fichier de programme créé : \n{path}")
+    # def program_file_created(self, path):
+    #     print(f"Fichier de programme créé : \n{path}")
 
-    def program_file_already_exists(self, path):
-        print(f"Nous avons trouvé le fichier de programme : \n{path}")
+    # def program_file_already_exists(self, path):
+    #     print(f"Nous avons trouvé le fichier de programme : \n{path}")
 
-    def program_file_empty(self):
-        print('Aucune information contenue dans le fichier de programme')
+    # def program_file_empty(self):
+    #     print('Aucune information contenue dans le fichier de programme')
 
     def prompt_for_main_menu_choice(self, program_status):
         program_file_empty = program_status[0]
@@ -45,7 +45,7 @@ class View:
 
     def prompt_for_tournament_creation(self):
         tournament_data = {}
-        input_data = input("Veuillez saisir le nom du tournoi :\n")
+        input_data = input("\nVeuillez saisir le nom du tournoi :\n")
         tournament_data['name'] = input_data
         input_data = input("Veuillez saisir le lieu du tournoi :\n")
         tournament_data['place'] = input_data
@@ -83,7 +83,7 @@ class View:
 
     def prompt_for_national_chess_identifier(self):
         national_chess_identifier = input(
-            "Veuillez rentrer le numéro d'identification d'échecs du joueur à inscrire au tournoi :\n"
+            "\nVeuillez rentrer le numéro d'identification d'échecs du joueur à inscrire au tournoi :\n"
         )
         national_chess_identifier_upper = national_chess_identifier.upper()
         return national_chess_identifier_upper
@@ -105,3 +105,20 @@ class View:
         input_data = f"{birth_date_day}/{birth_date_month}/{birth_date_year}"
         player_data['birth_date'] = input_data
         return player_data
+
+    def prompt_for_new_player_options(self):
+        print("\nVous n'êtes pas suffisamment nombreux ou pas un nombre pair de joueurs.")
+        print("Que souhaitez-vous faire ?")
+        choice = input("1 - Revenir au menu principal\n"
+                       "2 - Ajouter un nouveau joueur\n")
+        return choice
+
+    def prompt_for_running_tournament_options(self):
+        print("\nVous êtes suffisamment nombreux et un nombre pair de joueurs.")
+        print("Que souhaitez-vous faire ?")
+        choice = input("1 - Revenir au menu principal\n"
+                       "2 - Ajouter un nouveau joueur\n"
+                       "3 - Lancer le tournoi\n")
+        return choice
+
+

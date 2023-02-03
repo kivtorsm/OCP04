@@ -4,7 +4,6 @@ import json
 import os
 
 from models.round import Round
-from models.json_file import ProgramData
 
 
 class Tournament:
@@ -131,7 +130,7 @@ class Tournament:
         tournament_round = self.round_list[round_number - 1]
         return tournament_round.match_list
 
-    def set_score(self, round_number: int, match_number: int, score_player1: list, score_player2: list, program_data: ProgramData):
+    def set_score(self, round_number: int, match_number: int, score_player1: list, score_player2: list):
         """
         Updates a given match score in a given round as well as concerned players' scores
         :param program_data: program current data
@@ -162,17 +161,6 @@ class Tournament:
         # updating the round in the tournament round list
         self.round_list[round_number - 1] = tournament_round
 
-        # updating the player's score
-        national_chess_id_player1 = score_player1[0]
-        score1 = score_player1[1]
-        national_chess_id_player2 = score_player2[0]
-        score2 = score_player2[1]
-        player1 = program_data.get_player(national_chess_id_player1)
-        player2 = program_data.get_player(national_chess_id_player2)
-        player1.set_score(score1)
-        player2.set_score(score2)
-
-        # updating player's opponent "has_played" list
-        player1.set_has_played(player2)
-        player2.set_has_played(player1)
+    def set_status_running(self):
+        self.status = "running"
 

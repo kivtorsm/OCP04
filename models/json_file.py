@@ -125,22 +125,43 @@ class ProgramData:
         except FileNotFoundError:
             print(f'fichier {self.file_path} inexistant')
 
-    def get_player(self, national_chess_identifier: str):
+    def get_player(self, national_chess_identifier: str) -> Player:
         player = self.player_dict[national_chess_identifier]
         return player
 
-    def is_player_in_database(self, national_chess_identifier: str):
-        player_list = self.player_dict.keys()
-        result = False
-        for player in player_list:
-            if player == national_chess_identifier:
-                result = True
-        return result
 
     def update_ongoing_tournament(self, tournament: Tournament):
         self.tournament_list[0] = tournament
         self.update_json_file()
 
+    def get_last_tournament(self) -> Tournament:
+        tournament_list = self.tournament_list
+        last_tournament = tournament_list[0]
+        return last_tournament
+
+    def set_score(self, round_number: int, match_number: int, score_player1: list, score_player2: list):
+        # Updating tournament matchs
+        current_tournament = self.get_last_tournament()
+        current_tournament.set_score(round_number, match_number, score_player1, score_player2)
+
+        # updating player's score
+        national_chess_id_player1 = score_player1[0]
+        national_chess_id_player2 = score_player2[0]
+        score1 = score_player1[1]
+        score2 = score_player2[1]
+        player1 = self.get_player(national_chess_id_player1)
+        player2 = self.get_player(national_chess_id_player2)
+        player1.set_score(score1)
+        player2.set_score(score2)
+
+        # updating player's opponent "has_played" list
+        player1.set_has_played(player2)
+        player2.set_has_played(player1)
+
+    def start_tournament(self):
+        tournament = self.get_last_tournament()
+        tournament.set_status_running()
+        self.update_json_file()
 
 class MyEncoder(json.JSONEncoder):
     """"
