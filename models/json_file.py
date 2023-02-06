@@ -129,7 +129,6 @@ class ProgramData:
         player = self.player_dict[national_chess_identifier]
         return player
 
-
     def update_ongoing_tournament(self, tournament: Tournament):
         self.tournament_list[0] = tournament
         self.update_json_file()
@@ -160,8 +159,18 @@ class ProgramData:
 
     def start_tournament(self):
         tournament = self.get_last_tournament()
+        # set tournament status to "running"
         tournament.set_status_running()
+        # Set current round number to 1
+        tournament.increase_round_number()
         self.update_json_file()
+
+    def get_current_round(self) -> Round:
+        last_tournament = self.get_last_tournament()
+        current_round_number = last_tournament.current_round
+        current_round = last_tournament.round_list[current_round_number-1]
+        return current_round
+
 
 class MyEncoder(json.JSONEncoder):
     """"

@@ -8,6 +8,7 @@ from models.player import Player
 
 from controllers.control_program_file import ControlProgramFile
 from controllers.control_tournament import ControlTournament
+from controllers.control_round import ControlRound
 
 from views.view import View
 
@@ -18,7 +19,7 @@ class MainController:
     PROGRAM_FILE_NAME = "chess_tournament_manager.json"
     PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}\\{PROGRAM_FILE_NAME}"
 
-    def __init__(self, view, program_file_controls: ControlProgramFile, tournament_controls: ControlTournament):
+    def __init__(self, view, program_file_controls: ControlProgramFile, tournament_controls: ControlTournament, round_controls: ControlRound):
         """
         Has a program file and a view
         """
@@ -28,6 +29,7 @@ class MainController:
         # controllers
         self.program_file_controls = program_file_controls
         self.tournament_controls = tournament_controls
+        self.round_controls = round_controls
 
     def get_main_menu_choice(self, program_status: list):
         choice = self.view.prompt_for_main_menu_choice(program_status)
@@ -81,12 +83,18 @@ class MainController:
         add_new_player = True
         while add_new_player:
             national_chess_identifier = self.get_national_chess_identifier()
-            is_already_signed_in = self.tournament_controls.player_already_signed_in_tournament(program_file, national_chess_identifier)
+            is_already_signed_in = \
+                self.tournament_controls.player_already_signed_in_tournament(program_file, national_chess_identifier)
+            print(str(is_already_signed_in) + " joueur déjà inscrit")
             try:
+                # Check if the player is already signed-in the tournament
                 assert is_already_signed_in
                 print(f"Le joueur {national_chess_identifier} est déjà inscrit au tournoi")
             except AssertionError:
-                is_player_in_database = self.program_file_controls.is_player_in_database(program_file, national_chess_identifier)
+                # If the player is not signed-in the tournament then check if it already exists in players database
+                is_player_in_database = self.program_file_controls.is_player_in_database(program_file,
+                                                                                         national_chess_identifier)
+                print(str(is_player_in_database) + " jouer en base de données")
                 if not is_player_in_database:
                     # ask for player data input
                     player_data = self.view.prompt_for_player_data()
@@ -97,11 +105,9 @@ class MainController:
                         national_chess_identifier=national_chess_identifier
                     )
                     # Add player to the player list in the program file
-                    program_file.add_player(player)
-                # Add player to ongoing tournament and update program file
-                tournament = program_file.get_last_tournament()
-                tournament.sign_in_player(national_chess_identifier)
-                program_file.update_ongoing_tournament(tournament)
+                    self.program_file_controls.add_player(player)
+                # Sign-in player to ongoing tournament and update program file
+                self.tournament_controls.sign_in_player(program_file, national_chess_identifier)
             finally:
                 # Ask if user wants to add another player
                 input_add_new_player = self.view.prompt_for_new_player()
@@ -123,11 +129,12 @@ class MainController:
         # ]
         # TODO : question : pourquoi ça ne marche pas
         while run_tournament:
+            enough_players = self.tournament_controls.does_tournament_has_minimum_number_of_players(program_file)
+            even_number_of_players = self.tournament_controls.is_player_count_even(program_file)
             if tournament.status == "signing-in players":
                 # Different menu depending on the evaluation of minimum number of players et total players = even
-                if not (self.tournament_controls.does_tournament_has_minimum_number_of_players(program_file)
-                        or
-                        self.tournament_controls.is_player_count_even(program_file)):
+
+                if not enough_players or not even_number_of_players:
                     option = self.view.prompt_for_new_player_options()
                 else:
                     option = self.view.prompt_for_running_tournament_options()
@@ -155,10 +162,19 @@ class MainController:
             elif tournament.status == "running":
                 self.play_tournament()
 
-
-    def play_tournament(self):
+    def play_current_round(self, program_file: ProgramData):
         # TODO : code code code
         pass
+
+    def play_tournament(self, program_file: ProgramData):
+        current_round_initialised = self.round_controls.is_current_round_initialised()
+        current_round = program_file.get_current_round()
+        if not current_round_initialised and current_round == 1:
+            self.round_controls.initialise_round1(program_file)
+        elif not current_round_initialised and not current_round == 1:
+            self.round_controls.initialise_round()
+        else:
+            self.play_current_round()
 
     def run_program(self, program_file):
         program_status = self.get_program_status(program_file)
@@ -171,10 +187,12 @@ def main():
     view = View()
     control_program_file = ControlProgramFile()
     control_tournament = ControlTournament()
+    control_round = ControlRound
     controller = MainController(
         view=view,
         program_file_controls=control_program_file,
-        tournament_controls=control_tournament
+        tournament_controls=control_tournament,
+        round_controls=control_round
     )
     program_file = controller.program_file_controls.charge_program_file()
     while True:

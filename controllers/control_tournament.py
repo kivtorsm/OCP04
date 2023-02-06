@@ -1,3 +1,4 @@
+# coding: utf-8
 
 from models.json_file import ProgramData
 
@@ -34,3 +35,7 @@ class ControlTournament:
         else:
             return True
 
+    def sign_in_player(self, program_file: ProgramData, national_chess_identifier: str):
+        tournament = program_file.get_last_tournament()
+        tournament.sign_in_player(national_chess_identifier)
+        program_file.update_ongoing_tournament(tournament)

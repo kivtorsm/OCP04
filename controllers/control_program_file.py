@@ -3,6 +3,7 @@
 import os
 
 from models.json_file import ProgramData
+from models.player import Player
 
 
 class ControlProgramFile:
@@ -81,6 +82,10 @@ class ControlProgramFile:
             if player == national_chess_identifier:
                 result = True
         return result
+
+    def add_player(self, player: Player, program_file: ProgramData):
+        program_file.add_player(player)
+
 
 def main():
     pass

@@ -212,7 +212,7 @@ def play_round1(tournament: Tournament, program_file: ProgramData):
         score_player2 = match.match_data[1]
         score_player1[1] = scores_list[match_number-1]
         score_player2[1] = scores_list[match_number+1]
-        tournament.set_score(round_number, match_number, score_player1, score_player2, program_file)
+        tournament.set_score(round_number, match_number, score_player1, score_player2)
 
 
 def main():

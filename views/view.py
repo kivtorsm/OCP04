@@ -17,11 +17,11 @@ class View:
         print(f"\nBienvenue au menu principal")
         # if empty file the only option is to create a nez tournament
         if program_file_empty:
-            input("Appuyez sur une touche pour démarrer un nouveau tournoi\n")
+            input("Appuyez sur entrée pour démarrer un nouveau tournoi\n")
             result = 0
         # if ongoing_tournament but no existing report data the only option is to carry-on with the tournament
         elif ongoing_tournament and not existing_report_data:
-            input("Appuyez sur une touche pour continuer le tournoi en cours\n")
+            input("Appuyez sur entrée pour continuer le tournoi en cours\n")
             result = 1
         # if ongoing_tournament and existing_report_data : carry-on with tournament or consult reports
         elif ongoing_tournament and existing_report_data:
@@ -121,4 +121,6 @@ class View:
                        "3 - Lancer le tournoi\n")
         return choice
 
-
+    def prompt_for_new_player(self):
+        choice = input("\nVoulez-vous inscrire un nouveau joueur ? (y/n)\n")
+        return choice
