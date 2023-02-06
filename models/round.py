@@ -56,6 +56,7 @@ class Round:
             match = Match(player1, player2)
             # The match is added to the round match list
             self.match_list.append(match)
+    #     TODO : Comprendre pourquoi ça remplit tous les rounds du tournoi
 
     def get_match_list(self, tournament, round_number):
         """
@@ -73,16 +74,5 @@ class Round:
         """
         self.next_match += 1
 
-    def is_round_finished(self, tournament):
-        """
-        Checks if the round has been finished by comparing the next_match indicator to the
-        number of matches per round of the tournament that depends on the number of players
-        :param tournament: tournament in which the round is played
-        :type tournament: Tournament
-        :return: result for test
-        :rtype: bool
-        """
-        if self.next_match > tournament.get_number_of_matches_per_round():
-            return True
-        else:
-            return False
+    def set_current_match_score(self, match_score):
+        self.match_list[self.next_match - 1] = match_score
