@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import random
 
 from models.json_file import ProgramData
 from models.tournament import Tournament
@@ -9,6 +10,7 @@ from models.player import Player
 from controllers.control_program_file import ControlProgramFile
 from controllers.control_tournament import ControlTournament
 from controllers.control_round import ControlRound
+from controllers.control_tournament_player import ControlTournamentPlayer
 
 from views.view import View
 from views.round_view import RoundView
@@ -20,7 +22,14 @@ class MainController:
     PROGRAM_FILE_NAME = "chess_tournament_manager.json"
     PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}\\{PROGRAM_FILE_NAME}"
 
-    def __init__(self, view, round_view, program_file_controls: ControlProgramFile, tournament_controls: ControlTournament, round_controls: ControlRound):
+    def __init__(self,
+                 view: View,
+                 round_view: RoundView,
+                 program_file_controls: ControlProgramFile,
+                 tournament_controls: ControlTournament,
+                 round_controls: ControlRound,
+                 tournament_player_controls: ControlTournamentPlayer
+                 ):
         """
         Has a program file and a view
         """
@@ -32,6 +41,7 @@ class MainController:
         self.program_file_controls = program_file_controls
         self.tournament_controls = tournament_controls
         self.round_controls = round_controls
+        self.tournament_player_controls = tournament_player_controls
 
         # models
         self.program_file = None
@@ -41,14 +51,13 @@ class MainController:
         choice = self.view.prompt_for_main_menu_choice(program_status)
         return choice
 
-    def run_main_menu_choice(self, program_file, menu_choice: int):
-        options_list = [
-            "self.create_tournament(program_file)",
-            "self.run_tournament(program_file)",
-            "self.get_report_menu_choice()"
-        ]
-        option_choice = options_list[menu_choice]
-        eval(option_choice)
+    def run_main_menu_choice(self, program_file: ProgramData, menu_choice: int):
+        if menu_choice == 0:
+            self.create_tournament(program_file)
+        elif menu_choice == 1:
+            self.run_tournament(program_file)
+        elif menu_choice == 2:
+            self.get_report_menu_choice()
 
     def create_tournament(self, program_file: ProgramData):
         tournament_data = self.view.prompt_for_tournament_creation()
@@ -151,6 +160,8 @@ class MainController:
                 add_new_player = self.sign_in_players(program_file)
             elif tournament.status == "running":
                 self.play_tournament(program_file)
+            else:
+                main()
 
     def play_current_round(self, program_file: ProgramData):
         current_round = program_file.get_current_round()
@@ -161,21 +172,22 @@ class MainController:
             is_round_finished = self.round_controls.is_round_finished(program_file)
             if not is_round_finished:
                 self.round_controls.set_match_score(program_file)
-
-        program_status = self.program_file_controls.evaluate_program_status(program_file)
-        choice = self.get_main_menu_choice(program_status)
-        self.run_main_menu_choice(program_file, choice)
+            else:
+                program_file.increase_round_number()
 
     def play_tournament(self, program_file: ProgramData):
-        current_round_initialised = self.round_controls.is_current_round_initialised(program_file)
-        current_round = program_file.get_current_round()
-        current_round_number = current_round.round_number
-        if not current_round_initialised and current_round_number == 1:
-            self.round_controls.initialise_round(program_file)
-        elif not current_round_initialised and not current_round_number == 1:
-            self.round_controls.initialise_round(program_file)
+        is_current_round_initialised = self.round_controls.is_current_round_initialised(program_file)
+        is_last_round = self.round_controls.is_last_round(program_file)
+        if not is_last_round:
+            if not is_current_round_initialised:
+                self.round_controls.initialise_round(program_file)
+            else:
+                self.play_current_round(program_file)
         else:
-            self.play_current_round(program_file)
+            finished_tournament = program_file.get_last_tournament()
+            finished_tournament.status = " finished"
+            program_file.update_json_file()
+            main()
 
     def run_program(self, program_file):
         program_status = self.program_file_controls.evaluate_program_status(program_file)
@@ -190,15 +202,17 @@ def main():
     control_program_file = ControlProgramFile()
     control_tournament = ControlTournament()
     control_round = ControlRound(round_view)
+    control_tournament_player = ControlTournamentPlayer()
     controller = MainController(
         view=view,
         round_view=round_view,
         program_file_controls=control_program_file,
         tournament_controls=control_tournament,
-        round_controls=control_round
+        round_controls=control_round,
+        tournament_player_controls=control_tournament_player
     )
     controller.program_file = controller.program_file_controls.charge_program_file()
-    # program_file = controller.program_file_controls.charge_program_file()
+
     while True:
         program_status = controller.program_file_controls.evaluate_program_status(controller.program_file)
         main_menu_choice = controller.get_main_menu_choice(program_status)

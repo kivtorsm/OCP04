@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from models.json_file import ProgramData
+from models.player_in_tournament import PlayerInTournament
 
 
 class ControlTournament:
