@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import os
-import random
 
 from models.json_file import ProgramData
 from models.tournament import Tournament
@@ -13,6 +12,7 @@ from controllers.control_round import ControlRound
 from controllers.control_tournament_player import ControlTournamentPlayer
 
 from views.view import View
+from views.menu_view import MenuView
 from views.round_view import RoundView
 
 
@@ -57,7 +57,7 @@ class MainController:
         elif menu_choice == 1:
             self.run_tournament(program_file)
         elif menu_choice == 2:
-            self.get_report_menu_choice()
+            self.menu_controller.get_report_menu_choice()
 
     def create_tournament(self, program_file: ProgramData):
         tournament_data = self.view.prompt_for_tournament_creation()
@@ -192,12 +192,16 @@ class MainController:
     def run_program(self, program_file):
         program_status = self.program_file_controls.evaluate_program_status(program_file)
         main_menu_choice = co
-        main_menu_option = self.get_main_menu_choice(program_status)
+        main_menu_option = self.menu_controller.get_main_menu_choice(program_status)
         # TODO : code code code
 
 
 def main():
     view = View()
+    menu_view = MenuView()
+    menu_controller = MenuController(
+        menu_view=menu_view
+    )
     round_view = RoundView()
     control_program_file = ControlProgramFile()
     control_tournament = ControlTournament()
@@ -205,6 +209,7 @@ def main():
     control_tournament_player = ControlTournamentPlayer()
     controller = MainController(
         view=view,
+        menu_controller=menu_controller,
         round_view=round_view,
         program_file_controls=control_program_file,
         tournament_controls=control_tournament,
@@ -215,8 +220,8 @@ def main():
 
     while True:
         program_status = controller.program_file_controls.evaluate_program_status(controller.program_file)
-        main_menu_choice = controller.get_main_menu_choice(program_status)
-        controller.run_main_menu_choice(controller.program_file, main_menu_choice)
+        main_menu_choice = controller.menu_controller.get_main_menu_choice(program_status)
+        controller.menu_controller.run_main_menu_choice(controller.program_file, main_menu_choice)
 
 
 if __name__ == "__main__":
