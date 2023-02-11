@@ -20,14 +20,22 @@ class ControlProgramFile:
         :return: list of booleans [file_is_empty, ongoing_tournament, existing_report_data]
         :rtype: list
         """
-        ongoing_tournament = False
-        existing_report_data = False
-        file_is_empty = self.program_file_is_empty()
-        if not file_is_empty:
+
+        result = [True, False, False, False, False]
+
+        try:
+            file_is_empty = self.program_file_is_empty()
             ongoing_tournament = self.ongoing_tournament_exists(program_file)
-            existing_report_data = self.player_data_exists(program_file) or self.tournament_data_exists(program_file)
-        result = [file_is_empty, ongoing_tournament, existing_report_data]
-        return result
+            existing_player_data = self.player_data_exists(program_file)
+            existing_tournament_data = self.tournament_data_exists(program_file)
+            existing_report_data = existing_player_data or existing_tournament_data
+
+            if not file_is_empty:
+                result = [file_is_empty, ongoing_tournament, existing_report_data, existing_player_data, existing_tournament_data]
+        except FileNotFoundError as error:
+            print(error)
+        finally:
+            return result
 
     def charge_program_file(self):
         """
@@ -49,10 +57,7 @@ class ControlProgramFile:
         return program_file
 
     def program_file_is_empty(self):
-        if os.path.getsize(self.PROGRAM_FILE_PATH) == 0:
-            return True
-        else:
-            return False
+        return os.path.getsize(self.PROGRAM_FILE_PATH) == 0
 
     def tournament_data_exists(self, program_file: ProgramData):
         if not program_file.tournament_list:

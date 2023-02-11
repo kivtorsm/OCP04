@@ -47,18 +47,18 @@ class MainController:
         self.program_file = None
         # Initialized in controllers.program_file_controls.charge_program_file
 
-    def get_main_menu_choice(self, program_status: list):
-        choice = self.view.prompt_for_main_menu_choice(program_status)
-        return choice
-
-    def run_main_menu_choice(self, program_file: ProgramData, menu_choice: int):
-        if menu_choice == 0:
-            self.create_tournament(program_file)
-        elif menu_choice == 1:
-            self.run_tournament(program_file)
-        elif menu_choice == 2:
-            self.menu_controller.get_report_menu_choice()
-
+    # def get_main_menu_choice(self, program_status: list):
+    #     choice = self.view.prompt_for_main_menu_choice(program_status)
+    #     return choice
+    # TODO : clean code
+    # def run_main_menu_choice(self, program_file: ProgramData, menu_choice: int):
+    #     if menu_choice == 0:
+    #         self.create_tournament(program_file)
+    #     elif menu_choice == 1:
+    #         self.run_tournament(program_file)
+    #     elif menu_choice == 2:
+    #         self.menu_controller.get_report_menu_choice()
+    # TODO : clean code
     def create_tournament(self, program_file: ProgramData):
         tournament_data = self.view.prompt_for_tournament_creation()
         tournament = Tournament(
@@ -71,10 +71,6 @@ class MainController:
         )
         program_file.add_new_tournament(tournament)
         self.run_tournament(program_file)
-
-    def get_report_menu_choice(self):
-        # TODO : code code code
-        pass
 
     def get_national_chess_identifier(self):
         national_chess_identifier_correct = False
