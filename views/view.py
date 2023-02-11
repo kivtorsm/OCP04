@@ -10,18 +10,19 @@ class View:
     # def program_file_empty(self):
     #     print('Aucune information contenue dans le fichier de programme')
 
-    def prompt_for_main_menu_choice(self, program_status):
+    @staticmethod
+    def prompt_for_main_menu_choice(program_status):
         program_file_empty = program_status[0]
         ongoing_tournament = program_status[1]
         existing_report_data = program_status[2]
         print(f"\nBienvenue au menu principal")
         # if empty file the only option is to create a nez tournament
         if program_file_empty:
-            input("Appuyez sur une touche pour démarrer un nouveau tournoi\n")
+            input("Appuyez sur entrée pour démarrer un nouveau tournoi\n")
             result = 0
         # if ongoing_tournament but no existing report data the only option is to carry-on with the tournament
         elif ongoing_tournament and not existing_report_data:
-            input("Appuyez sur une touche pour continuer le tournoi en cours\n")
+            input("Appuyez sur entrée pour continuer le tournoi en cours\n")
             result = 1
         # if ongoing_tournament and existing_report_data : carry-on with tournament or consult reports
         elif ongoing_tournament and existing_report_data:
@@ -43,7 +44,8 @@ class View:
                 result = 2
         return result
 
-    def prompt_for_tournament_creation(self):
+    @staticmethod
+    def prompt_for_tournament_creation():
         tournament_data = {}
         input_data = input("\nVeuillez saisir le nom du tournoi :\n")
         tournament_data['name'] = input_data
@@ -81,14 +83,16 @@ class View:
 
         return tournament_data
 
-    def prompt_for_national_chess_identifier(self):
+    @staticmethod
+    def prompt_for_national_chess_identifier():
         national_chess_identifier = input(
             "\nVeuillez rentrer le numéro d'identification d'échecs du joueur à inscrire au tournoi :\n"
         )
         national_chess_identifier_upper = national_chess_identifier.upper()
         return national_chess_identifier_upper
 
-    def prompt_for_player_data(self):
+    @staticmethod
+    def prompt_for_player_data():
         player_data = {}
         input_data = input("Veuillez rentrer le prénom du joueur:\n")
         player_data['first_name'] = input_data
@@ -106,14 +110,16 @@ class View:
         player_data['birth_date'] = input_data
         return player_data
 
-    def prompt_for_new_player_options(self):
+    @staticmethod
+    def prompt_for_new_player_options():
         print("\nVous n'êtes pas suffisamment nombreux ou pas un nombre pair de joueurs.")
         print("Que souhaitez-vous faire ?")
         choice = input("1 - Revenir au menu principal\n"
                        "2 - Ajouter un nouveau joueur\n")
         return choice
 
-    def prompt_for_running_tournament_options(self):
+    @staticmethod
+    def prompt_for_running_tournament_options():
         print("\nVous êtes suffisamment nombreux et un nombre pair de joueurs.")
         print("Que souhaitez-vous faire ?")
         choice = input("1 - Revenir au menu principal\n"
@@ -121,4 +127,11 @@ class View:
                        "3 - Lancer le tournoi\n")
         return choice
 
+    @staticmethod
+    def prompt_for_new_player():
+        choice = input("\nVoulez-vous inscrire un nouveau joueur ? (y/n)\n")
+        return choice
 
+    @staticmethod
+    def show_player_already_signed_in(national_chess_identifier):
+        print(f"Le joueur {national_chess_identifier} est déjà inscrit au tournoi")

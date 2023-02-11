@@ -6,6 +6,7 @@ from models.tournament import Tournament
 from models.round import Round
 from models.match import Match
 from models.player import Player
+from models.player_in_tournament import PlayerInTournament
 
 
 class ProgramData:
@@ -75,40 +76,41 @@ class ProgramData:
                 file_tournament_list = file_data['tournament_list']
                 player_dict = file_data['player_dict']
                 for tournament_data in file_tournament_list:
-                    tournament_name = tournament_data['name']
-                    tournament_place = tournament_data['place']
-                    tournament_start_date = tournament_data['start_date']
-                    tournament_end_date = tournament_data['end_date']
-                    tournament_total_rounds = tournament_data['total_rounds']
-                    tournament_current_round = tournament_data['current_round']
-                    tournament_description = tournament_data['description']
                     tournament = Tournament(
-                        tournament_name,
-                        tournament_place,
-                        tournament_start_date,
-                        tournament_end_date,
-                        tournament_description,
-                        tournament_total_rounds,
-                        tournament_current_round
+                        name=tournament_data['name'],
+                        place=tournament_data['place'],
+                        start_date=tournament_data['start_date'],
+                        end_date=tournament_data['end_date'],
+                        description=tournament_data['description'],
+                        rounds=tournament_data['total_rounds'],
+                        current_round=tournament_data['current_round'],
+                        status=tournament_data['status']
                     )
                     for json_round in tournament_data['round_list']:
-                        # Get round number for each item of the round list
-                        round_number = json_round['round_number']
                         # Initialise round object for each item of the round list
-                        tournament_round = Round(round_number + 1)
-                        # Set object attributes
-                        tournament_round.name = json_round['name']
-                        tournament_round.start_datetime = json_round['start_datetime']
-                        tournament_round.end_datetime = json_round['end_datetime']
+                        tournament_round = Round(
+                            round_number=json_round['round_number'],
+                            start_datetime=json_round['start_datetime'],
+                            end_datetime=json_round['end_datetime'],
+                            next_match=json_round['next_match']
+                        )
                         # For each match in the json file create object Match and append to match list
                         for json_match in json_round['match_list']:
-                            match = Match(json_match[0], json_match[1])
+                            match_data = json_match['match_data']
+                            match = Match(match_data[0], match_data[1])
                             # Append match to the tournament round
                             tournament_round.match_list.append(match)
-                        # Append round to round list in tournament
-                        tournament.round_list.append(tournament_round)
+                        # Insert round in the round list round's position (round_number -1)
+                        tournament.round_list[int(json_round['round_number']) - 1] = tournament_round
                     # save players list
                     tournament.player_list = tournament_data['player_list']
+                    for value in tournament_data['player_dict'].values():
+                        player_in_tournament = PlayerInTournament(
+                            national_chess_identifier=value['national_chess_identifier'],
+                            score=value['score'],
+                            has_played=value['has_played']
+                        )
+                        tournament.player_dict[player_in_tournament.national_chess_identifier] = player_in_tournament
                     # append tournament to tournament program file
                     self.tournament_list.append(tournament)
 
@@ -119,16 +121,15 @@ class ProgramData:
                     # create dict entry with player object
                     self.player_dict[player.national_chess_identifier] = player
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as error:
             # In case of empty file, we return the empty player list
-            print('fichier vide')
+            print(error)
         except FileNotFoundError:
             print(f'fichier {self.file_path} inexistant')
 
     def get_player(self, national_chess_identifier: str) -> Player:
         player = self.player_dict[national_chess_identifier]
         return player
-
 
     def update_ongoing_tournament(self, tournament: Tournament):
         self.tournament_list[0] = tournament
@@ -160,8 +161,34 @@ class ProgramData:
 
     def start_tournament(self):
         tournament = self.get_last_tournament()
+        # set tournament status to "running"
         tournament.set_status_running()
+        # Set current round number to 1
+        tournament.increase_round_number()
         self.update_json_file()
+
+    def get_current_round(self) -> Round:
+        try:
+            last_tournament = self.get_last_tournament()
+            current_round_number = last_tournament.current_round
+            current_round = last_tournament.round_list[current_round_number-1]
+            return current_round
+        except IndexError as error:
+            return None
+
+    def set_tournament_round_match_list(self, match_list: list):
+        # get ongoing tournament
+        tournament = self.get_last_tournament()
+        # set ongoing tournament match list
+        tournament.set_round_match_list(match_list)
+        # update ongoing tournament
+        self.update_ongoing_tournament(tournament)
+
+    def increase_round_number(self):
+        ongoing_tournament = self.get_last_tournament()
+        ongoing_tournament.increase_round_number()
+        self.update_json_file()
+
 
 class MyEncoder(json.JSONEncoder):
     """"

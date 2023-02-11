@@ -3,6 +3,7 @@
 import os
 
 from models.json_file import ProgramData
+from models.player import Player
 
 
 class ControlProgramFile:
@@ -66,21 +67,36 @@ class ControlProgramFile:
             return True
 
     def ongoing_tournament_exists(self, program_file: ProgramData):
-        result = False
         if self.tournament_data_exists(program_file):
             last_tournament = program_file.get_last_tournament()
             last_tournament_status = last_tournament.status
-            if not last_tournament_status == "finished":
-                result = True
-        return result
+            return last_tournament_status == "finished"
 
     def is_player_in_database(self, program_file: ProgramData, national_chess_identifier: str):
         player_list = program_file.player_dict.keys()
-        esult = False
+        result = False
         for player in player_list:
             if player == national_chess_identifier:
                 result = True
         return result
+
+    def add_player(self, player: Player, program_file: ProgramData):
+        program_file.add_player(player)
+
+    def start_current_round(self, program_file: ProgramData):
+        current_tournament = program_file.get_last_tournament()
+        # Set round start time
+        current_tournament.set_round_start_time()
+        # update ongoing tournament with the start date
+        program_file.update_ongoing_tournament(current_tournament)
+        # update de json file
+        program_file.update_json_file()
+
+    def end_current_round(self, program_file: ProgramData):
+        current_tournament = program_file.get_last_tournament()
+        current_tournament.set_round_end_time()
+        program_file.update_ongoing_tournament(current_tournament)
+        program_file.update_json_file()
 
 def main():
     pass

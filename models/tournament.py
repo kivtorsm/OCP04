@@ -4,6 +4,7 @@ import json
 import os
 
 from models.round import Round
+from models.player_in_tournament import PlayerInTournament
 
 
 class Tournament:
@@ -11,8 +12,17 @@ class Tournament:
     Player list contained in JSON file
     """
 
-    def __init__(self, name, place, start_date, end_date, description, player_list=[], rounds=4,
-                 status="signing-in players", current_round=0):
+    def __init__(
+            self,
+            name,
+            place,
+            start_date,
+            end_date,
+            description,
+            player_list=[],
+            player_dict={},
+            rounds=4,
+            status="signing-in players", current_round=0):
 
         self.name = name
         self.place = place
@@ -27,6 +37,7 @@ class Tournament:
             tournament_round = Round(round_number + 1)
             self.round_list.append(tournament_round)
         self.player_list = player_list
+        self.player_dict = player_dict
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
@@ -48,6 +59,8 @@ class Tournament:
         :rtype: None
         """
         self.player_list.append(national_chess_identifier)
+        player_in_tournament = PlayerInTournament(national_chess_identifier)
+        self.player_dict[player_in_tournament.national_chess_identifier] = player_in_tournament
 
     def get_number_of_players(self):
         """
@@ -91,22 +104,23 @@ class Tournament:
         self.set_tournament_data_from_json_file()
         return self.round_list
 
-    def set_round_match_list(self, round_number, match_list):
+    def set_round_match_list(self, match_list):
         """
         Updates the list of matches of a given round with a new given list of matches
-        :param round_number: the round number where to update the list of matches
-        :type round_number: int
         :param match_list: the updated list of matches to set in the round match list
         :type match_list: list
-        :return: None
+        :return: No return
         :rtype: None
         """
         # create round object
-        tournament_round = Round(round_number)
+        current_round = self.current_round
+        tournament_round = self.round_list[current_round-1]
         # update round with json data
-        tournament_round.set_match_list(self, match_list)
+        # tournament_round.set_match_list(self, match_list)
+        # TODO : comprendre pourquoi ça remplit tous les rounds
+        tournament_round.match_list = match_list
         # update tournament with round object
-        self.round_list[round_number - 1] = tournament_round
+        self.round_list[current_round - 1] = tournament_round
 
     def get_round(self, round_number) -> Round:
         """
@@ -164,3 +178,16 @@ class Tournament:
     def set_status_running(self):
         self.status = "running"
 
+    def set_round_start_time(self):
+        current_round = self.get_round(self.current_round)
+        current_round.set_start_time()
+        self.round_list[self.current_round - 1] = current_round
+
+    def set_round_end_time(self):
+        current_round = self.get_round()
+        current_round.set_end_time()
+        self.round_list[self.current_round - 1] = current_round
+
+    def get_player_in_tournament(self, national_chess_identifier: str) -> PlayerInTournament:
+        player_in_tournament = self.player_dict[national_chess_identifier]
+        return player_in_tournament
