@@ -1,8 +1,7 @@
 # coding: utf-8
 
-from controllers.maincontroller import MainController
+from controllers.tournament_controller import MainController
 from controllers.control_program_file import ControlProgramFile
-
 
 from views.view import View
 
