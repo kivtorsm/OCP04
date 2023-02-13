@@ -60,16 +60,10 @@ class ControlProgramFile:
         return os.path.getsize(self.PROGRAM_FILE_PATH) == 0
 
     def tournament_data_exists(self, program_file: ProgramData):
-        if not program_file.tournament_list:
-            return False
-        else:
-            return True
+        return program_file.tournament_list != 0
 
     def player_data_exists(self, program_file: ProgramData):
-        if not program_file.player_dict:
-            return False
-        else:
-            return True
+        return program_file.player_dict != 0
 
     def ongoing_tournament_exists(self, program_file: ProgramData):
         if self.tournament_data_exists(program_file):
@@ -102,6 +96,7 @@ class ControlProgramFile:
         current_tournament.set_round_end_time()
         program_file.update_ongoing_tournament(current_tournament)
         program_file.update_json_file()
+
 
 def main():
     pass
