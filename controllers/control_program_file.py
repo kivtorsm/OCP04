@@ -10,6 +10,7 @@ class ControlProgramFile:
     PROGRAM_FILE_FOLDER_PATH = os.path.abspath(f"./data")
     PROGRAM_FILE_NAME = "chess_tournament_manager.json"
     PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}\\{PROGRAM_FILE_NAME}"
+    program_file = None
 
     def evaluate_program_status(self, program_file: ProgramData):
         """
@@ -20,14 +21,22 @@ class ControlProgramFile:
         :return: list of booleans [file_is_empty, ongoing_tournament, existing_report_data]
         :rtype: list
         """
-        ongoing_tournament = False
-        existing_report_data = False
-        file_is_empty = self.program_file_is_empty()
-        if not file_is_empty:
+
+        result = [True, False, False, False, False]
+
+        try:
+            file_is_empty = self.program_file_is_empty()
             ongoing_tournament = self.ongoing_tournament_exists(program_file)
-            existing_report_data = self.player_data_exists(program_file) or self.tournament_data_exists(program_file)
-        result = [file_is_empty, ongoing_tournament, existing_report_data]
-        return result
+            existing_player_data = self.player_data_exists(program_file)
+            existing_tournament_data = self.tournament_data_exists(program_file)
+            existing_report_data = existing_player_data or existing_tournament_data
+
+            if not file_is_empty:
+                result = [file_is_empty, ongoing_tournament, existing_report_data, existing_player_data, existing_tournament_data]
+        except FileNotFoundError as error:
+            print(error)
+        finally:
+            return result
 
     def charge_program_file(self):
         """
@@ -46,25 +55,20 @@ class ControlProgramFile:
         # charges json file data to ProgramData object
         program_file.update_data_object_from_json()
 
+        self.program_file = program_file
+
         return program_file
 
     def program_file_is_empty(self):
-        if os.path.getsize(self.PROGRAM_FILE_PATH) == 0:
-            return True
-        else:
-            return False
+        return os.path.getsize(self.PROGRAM_FILE_PATH) == 0
 
-    def tournament_data_exists(self, program_file: ProgramData):
-        if not program_file.tournament_list:
-            return False
-        else:
-            return True
+    @staticmethod
+    def tournament_data_exists(program_file: ProgramData):
+        return program_file.tournament_list != 0
 
-    def player_data_exists(self, program_file: ProgramData):
-        if not program_file.player_dict:
-            return False
-        else:
-            return True
+    @staticmethod
+    def player_data_exists(program_file: ProgramData):
+        return program_file.player_dict != 0
 
     def ongoing_tournament_exists(self, program_file: ProgramData):
         if self.tournament_data_exists(program_file):
@@ -72,7 +76,8 @@ class ControlProgramFile:
             last_tournament_status = last_tournament.status
             return last_tournament_status == "finished"
 
-    def is_player_in_database(self, program_file: ProgramData, national_chess_identifier: str):
+    @staticmethod
+    def is_player_in_database(program_file: ProgramData, national_chess_identifier: str):
         player_list = program_file.player_dict.keys()
         result = False
         for player in player_list:
@@ -80,10 +85,12 @@ class ControlProgramFile:
                 result = True
         return result
 
-    def add_player(self, player: Player, program_file: ProgramData):
+    @staticmethod
+    def add_player(player: Player, program_file: ProgramData):
         program_file.add_player(player)
 
-    def start_current_round(self, program_file: ProgramData):
+    @staticmethod
+    def start_current_round(program_file: ProgramData):
         current_tournament = program_file.get_last_tournament()
         # Set round start time
         current_tournament.set_round_start_time()
@@ -92,11 +99,16 @@ class ControlProgramFile:
         # update de json file
         program_file.update_json_file()
 
-    def end_current_round(self, program_file: ProgramData):
+    @staticmethod
+    def end_current_round(program_file: ProgramData):
         current_tournament = program_file.get_last_tournament()
         current_tournament.set_round_end_time()
         program_file.update_ongoing_tournament(current_tournament)
         program_file.update_json_file()
+
+    def get_number_of_tournaments(self):
+        return len(self.program_file.get_tournament_list())
+
 
 def main():
     pass

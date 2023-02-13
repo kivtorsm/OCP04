@@ -58,7 +58,7 @@ class Round:
             self.match_list.append(match)
     #     TODO : Comprendre pourquoi ça remplit tous les rounds du tournoi
 
-    def get_match_list(self, tournament, round_number):
+    def get_match_list(self):
         """
         Returns the match list form the round
         :return: list of matches

@@ -189,6 +189,16 @@ class ProgramData:
         ongoing_tournament.increase_round_number()
         self.update_json_file()
 
+    def get_player_dict(self):
+        return self.player_dict
+
+    def get_tournament_list(self):
+        return self.tournament_list
+
+    def get_tournament(self, tournament_position):
+        tournament_list = self.get_tournament_list()
+        return tournament_list[tournament_position]
+
 
 class MyEncoder(json.JSONEncoder):
     """"
