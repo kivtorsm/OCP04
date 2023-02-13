@@ -10,6 +10,7 @@ class ControlProgramFile:
     PROGRAM_FILE_FOLDER_PATH = os.path.abspath(f"./data")
     PROGRAM_FILE_NAME = "chess_tournament_manager.json"
     PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}\\{PROGRAM_FILE_NAME}"
+    program_file = None
 
     def evaluate_program_status(self, program_file: ProgramData):
         """
@@ -54,15 +55,19 @@ class ControlProgramFile:
         # charges json file data to ProgramData object
         program_file.update_data_object_from_json()
 
+        self.program_file = program_file
+
         return program_file
 
     def program_file_is_empty(self):
         return os.path.getsize(self.PROGRAM_FILE_PATH) == 0
 
-    def tournament_data_exists(self, program_file: ProgramData):
+    @staticmethod
+    def tournament_data_exists(program_file: ProgramData):
         return program_file.tournament_list != 0
 
-    def player_data_exists(self, program_file: ProgramData):
+    @staticmethod
+    def player_data_exists(program_file: ProgramData):
         return program_file.player_dict != 0
 
     def ongoing_tournament_exists(self, program_file: ProgramData):
@@ -71,7 +76,8 @@ class ControlProgramFile:
             last_tournament_status = last_tournament.status
             return last_tournament_status == "finished"
 
-    def is_player_in_database(self, program_file: ProgramData, national_chess_identifier: str):
+    @staticmethod
+    def is_player_in_database(program_file: ProgramData, national_chess_identifier: str):
         player_list = program_file.player_dict.keys()
         result = False
         for player in player_list:
@@ -79,10 +85,12 @@ class ControlProgramFile:
                 result = True
         return result
 
-    def add_player(self, player: Player, program_file: ProgramData):
+    @staticmethod
+    def add_player(player: Player, program_file: ProgramData):
         program_file.add_player(player)
 
-    def start_current_round(self, program_file: ProgramData):
+    @staticmethod
+    def start_current_round(program_file: ProgramData):
         current_tournament = program_file.get_last_tournament()
         # Set round start time
         current_tournament.set_round_start_time()
@@ -91,11 +99,15 @@ class ControlProgramFile:
         # update de json file
         program_file.update_json_file()
 
-    def end_current_round(self, program_file: ProgramData):
+    @staticmethod
+    def end_current_round(program_file: ProgramData):
         current_tournament = program_file.get_last_tournament()
         current_tournament.set_round_end_time()
         program_file.update_ongoing_tournament(current_tournament)
         program_file.update_json_file()
+
+    def get_number_of_tournaments(self):
+        return len(self.program_file.get_tournament_list())
 
 
 def main():

@@ -7,18 +7,21 @@ from controllers.control_tournament import ControlTournament
 from controllers.control_round import ControlRound
 from controllers.control_tournament_player import ControlTournamentPlayer
 from controllers.tournament_controller import MainController
+from controllers.reports_c import ReportsController
 
 
 from views.view import View
+from views.reports_v import ReportsView
 from views.round_view import RoundView
 
 from views.menu_view import MenuView
 
 
 class MenuController:
-    def __init__(self, menu_view: MenuView, main_controller: MainController):
+    def __init__(self, menu_view: MenuView, main_controller: MainController, reports_controller: ReportsController):
         # Controllers
         self.main_controller = main_controller
+        self.reports_controller = reports_controller
 
         # views
         self.menu_view = menu_view
@@ -33,11 +36,9 @@ class MenuController:
         elif menu_choice == 1:
             self.main_controller.run_tournament(program_file)
         elif menu_choice == 2:
-            self.get_report_menu_choice()
-
-    def get_report_menu_choice(self):
-        # TODO : code code code
-        pass
+            self.reports_controller.run_player_list_report()
+        elif menu_choice == 3:
+            self.reports_controller.run_tournament_list_report()
 
 
 def main():
@@ -56,13 +57,18 @@ def main():
         tournament_player_controls=control_tournament_player
     )
 
+    tournament_controller.program_file = tournament_controller.program_file_controls.charge_program_file()
+
+    reports_view = ReportsView()
+    reports_controller = ReportsController(tournament_controller.program_file, control_program_file, reports_view)
+
     menu_view = MenuView()
+
     menu_controller = MenuController(
         menu_view=menu_view,
-        main_controller=tournament_controller
+        main_controller=tournament_controller,
+        reports_controller=reports_controller
     )
-
-    tournament_controller.program_file = tournament_controller.program_file_controls.charge_program_file()
 
     while True:
         program_status = tournament_controller.program_file_controls.evaluate_program_status(tournament_controller.program_file)

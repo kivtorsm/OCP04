@@ -20,3 +20,13 @@ class Match:
 
     def set_score(self, player1, player2):
         self.match_data = tuple((player1, player2))
+
+    def get_player_national_chess_identifier(self, player_number: int):
+        player_data = self.match_data[player_number]
+        player_national_chess_identifier = player_data[0]
+        return player_national_chess_identifier
+
+    def get_player_score(self, player_number: int):
+        player_data = self.match_data[player_number]
+        player_score = player_data[1]
+        return player_score

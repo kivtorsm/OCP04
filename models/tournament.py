@@ -101,7 +101,6 @@ class Tournament:
         :return: list of rounds to be played in the tournament
         :rtype: list
         """
-        self.set_tournament_data_from_json_file()
         return self.round_list
 
     def set_round_match_list(self, match_list):
@@ -191,3 +190,14 @@ class Tournament:
     def get_player_in_tournament(self, national_chess_identifier: str) -> PlayerInTournament:
         player_in_tournament = self.player_dict[national_chess_identifier]
         return player_in_tournament
+
+    def get_status_in_french(self):
+        status_dict = {
+            "signing-in players": "Inscriptions joueurs",
+            "running": "En cours",
+            "finished": "Fini"
+        }
+        return status_dict[self.status]
+
+    def get_player_dict(self):
+        return self.player_dict
