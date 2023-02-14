@@ -22,7 +22,12 @@ class ReportsController:
         # views
         self.reports_view = reports_view
 
-    def create_player_list_table(self):
+    def create_player_list_table(self) -> PrettyTable:
+        """
+        Creates and returns a list of players in printing format
+        :return: list of players formatted for printing
+        :rtype: PrettyTable
+        """
         table = PrettyTable()
         player_dict = self.program_file.get_player_dict()
         list_of_players = player_dict.values()
@@ -39,7 +44,12 @@ class ReportsController:
         table.get_string(sortby="Nom")
         return table
 
-    def create_tournament_list_table(self):
+    def create_tournament_list_table(self) -> PrettyTable:
+        """
+        Creates and returns a list of tournaments in printing format
+        :return: list of tournaments formatted for printing
+        :rtype: PrettyTable
+        """
         table = PrettyTable()
         tournament_list = self.program_file.get_tournament_list()
         table.field_names = ["#", "Nom", "Lieu", "Date début", "Date fin", "Rounds", "État"]
@@ -64,7 +74,14 @@ class ReportsController:
         return table
 
     @staticmethod
-    def create_tournament_player_list_table(tournament: Tournament):
+    def create_tournament_player_list_table(tournament: Tournament) -> PrettyTable:
+        """
+        Creates and returns a list of players signed-in a tournament in printing format
+        :param tournament: tournament for which the player list has to be printed
+        :type tournament: Tournament
+        :return: list of a tournament players formatted for printing
+        :rtype: PrettyTable
+        """
         table = PrettyTable()
         tournament_player_dict = tournament.get_player_dict()
         tournament_player_list = tournament_player_dict.values()
@@ -80,6 +97,13 @@ class ReportsController:
 
     @staticmethod
     def create_match_list_table(tournament_round: Round):
+        """
+        Creates and returns a list of matches inside a round of a defined tournament
+        :param tournament_round: for which the player list has to be printed
+        :type tournament_round: Round
+        :return: list of a tournament players formatted for printing
+        :rtype: PrettyTable
+        """
         table = PrettyTable()
         round_match_list = tournament_round.get_match_list()
         table.field_names = ["#", "Player 1", "Score P1", "Score P2", "Player 2"]
@@ -95,43 +119,54 @@ class ReportsController:
             )
         return table
 
-    def choose_tournament_details_report(self):
+    def run_tournament_list_report_menu(self):
+        """
+        Proposes menu after the tournament list report and generates tournament details report
+        :return: none
+        :rtype:
+        """
+        # Save number of tournaments
         tournament_list_length = self.program_file_control.get_number_of_tournaments()
+
+        # Ask for user decision : 0 -> main menu, # -> show tournament # details report
         choice = self.reports_view.prompt_for_tournament_list_report_choice(tournament_list_length)
-        print(choice)
-        print(type(choice))
         if choice == 0:
             pass
+        # when choice is different from 0, generate tournament details report
         else:
-            print(choice)
+            # get the tournament list
             tournament_list = self.program_file.get_tournament_list()
+            # get the tournament # in te position # - 1
             tournament = tournament_list[choice - 1]
+            # get tournament round list
             tournament_round_list = tournament.get_round_list()
             match_table_list = []
+            # for each round, generate a PrettyFormat table with the match data and append it to a list of match tables
             for tournament_round in tournament_round_list:
+                # generate prettyformat match table
                 match_table = self.create_match_list_table(tournament_round)
+                # append table to match table list
                 match_table_list.append(match_table)
+
+            # show tournament details report
             self.reports_view.show_tournament(tournament, match_table_list)
-            # choice = self.run_tournament_details_report_menu_choice()
 
     def run_player_list_report(self):
+        """
+        Launches the player list report
+        :return: none
+        :rtype:
+        """
         player_table = self.create_player_list_table()
         self.reports_view.show_player_list(player_table)
 
     def run_tournament_list_report(self):
-        choice = "c"
+        """
+        Launches the tournament list report
+        :return:
+        :rtype:
+        """
         tournament_list_table = self.create_tournament_list_table()
         self.reports_view.show_tournament_list(tournament_list_table)
-        self.choose_tournament_details_report()
-        # while choice not in [str(0), str(1)]:
-        #     choice = self.reports_view.prompt_for_tournament_list_report_choice()
-        #     if choice == 0:
-        #         pass
-        #     elif choice == 1:
-        #         self.run_tournament_details_report_menu_choice()
+        self.run_tournament_list_report_menu()
 
-    # def run_tournament_details_report_menu_choice(self):
-    #     choice = "c"
-    #     while choice not in [0, 1]:
-    #         choice = self.reports_view.prompt_for_tournament_details_report_choice()
-    #     return int(choice)
