@@ -1,8 +1,19 @@
 
-
 class MenuView:
     @staticmethod
-    def prompt_for_main_menu_choice(program_status):
+    def prompt_for_main_menu_choice(program_status: list):
+        """
+        Main menu view. Shows at programs start-up and asks for user input depending on the program status
+        :param program_status: provides information on available data :
+            program_file empty,
+            ongoing_tournament,
+            existing_report_data,
+            existing_player_data,
+            existing_tournament_data
+        :type program_status: list
+        :return: user choice depending on the 
+        :rtype:
+        """
         program_file_empty = program_status[0]
         ongoing_tournament = program_status[1]
         existing_report_data = program_status[2]
