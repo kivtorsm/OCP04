@@ -1,16 +1,34 @@
 
+from prettytable import PrettyTable
 
 from models.tournament import Tournament
 from models.round import Round
 
-class ReportsView:
 
+class ReportsView:
+    """
+    Reports module view
+    """
     @staticmethod
-    def print_table(table):
+    def print_table(table: PrettyTable):
+        """
+        Prints a table given in parameters
+        :param table: table to be printed given
+        :type table: PrettyTable
+        :return: No return
+        :rtype: Empty
+        """
         print(table)
 
     @staticmethod
     def show_round_data(tournament_round: Round):
+        """
+        Prints round data
+        :param tournament_round: tournament round to be printed
+        :type tournament_round: Round
+        :return: Empty
+        :rtype:
+        """
         print(
             f"\n{tournament_round.name.upper()}"
             f"\nDébut : {tournament_round.start_datetime}"
@@ -18,103 +36,37 @@ class ReportsView:
         )
 
     @staticmethod
-    def prompt_for_report_menu_choice(program_status):
-        existing_player_data = program_status[3]
-        existing_tournament_data = program_status[4]
-        option = "c"
-        print(f"\nBienvenue à la consultation de rapports")
-        # if No player data user can consult tournament database
-        if not existing_player_data:
-            while option not in [str(0), str(1)]:
-                print("Veuillez choisir une option :")
-                option = input("0 - Revenir au menu principal"
-                               "1 - Consulter la base de données des tournois \n")
-                try:
-                    if int(option) == 0:
-                        result = 0
-                    elif int(option) == 1:
-                        result = 1
-                except ValueError:
-                    pass
-        # if No tournament data user can consult player database
-        elif not existing_tournament_data:
-            while option not in [str(0), str(1)]:
-                print("Veuillez choisir une option :")
-                option = input("0 - Revenir au menu principal"
-                               "1 - Consulter la base de données des joueurs \n")
-                try:
-                    if int(option) == 0:
-                        result = 0
-                    elif int(option) == 1:
-                        result = 4
-                except ValueError:
-                    pass
-        # if ongoing_tournament and existing_report_data : carry-on with tournament or consult reports
-        else:
-            while option not in [str(0), str(1), str(2)]:
-                print("Veuillez choisir une option :")
-                option = input("0 - Revenir au menu principal\n"
-                               "1 - Consulter la base de données des joueurs \n"
-                               "2 - Consulter la base de données des tournois \n")
-                try:
-                    if int(option) == 0:
-                        result = 0
-                    elif int(option) == 1:
-                        result = 4
-                    elif int(option) == 2:
-                        result = 3
-                except ValueError:
-                    pass
-
-        return result
-
-    @staticmethod
-    def prompt_for_tournament_list_report_choice(tournament_list_length: int):
-        option = "c"
+    def prompt_for_tournament_list_report_choice(tournament_list_length: int) -> int:
+        """
+        Menu after listing all tournaments. Allows user to consult details of a tournament or to go back to main menu
+        :param tournament_list_length: length of the tournament list in the database. Allows control of the input choice
+        :type tournament_list_length: int
+        :return: Menu choice : 0 -> main menu, # -> tournament number to show
+        :rtype: int
+        """
         result = "c"
+        incorrect_input_value = True
 
-        while option not in [str(0), str(1)]:
-            print("Veuillez choisir une option :")
-            option = input("0 - Revenir au menu principal\n"
-                           "1 - Consulter les détails d'un tournoi \n")
+        while incorrect_input_value:
+            option = input("\nVeuillez saisir le numéro du tournoi à consulter ou 0 pour revenir au menu principal\n")
             try:
-                if int(option) == 0:
-                    result = 0
-                elif int(option) == 1:
-                    result = 1
+                result = int(option)
+                if result in range(0, int(tournament_list_length) + 1):
+                    incorrect_input_value = False
             except ValueError:
-                pass
-
-        if int(option) == 1:
-            option = "c"
-            while option not in range(1, int(tournament_list_length) + 1):
-                option = input("Veuillez saisir le numéro de tournoi à afficher :\n")
-                try:
-                    option = int(option)
-                    result = int(option)
-                except ValueError:
-                    pass
-
-        return result
-
-    @staticmethod
-    def prompt_for_tournament_details_report_choice():
-        option = "c"
-        result = "c"
-
-        while option not in [str(0), str(1)]:
-            print("Veuillez choisir une option :")
-            option = input("0 - Revenir au menu principal\n"
-                           "1 - Revenir à la liste des tournois \n")
-            try:
-                if int(option) in [0, 1]:
-                    result = int(option)
-            except ValueError:
-                pass
-
+                print("Veuillez saisir un nombre entier dans la limite du nombre de tournois affichés")
         return result
 
     def show_tournament(self, tournament: Tournament, match_table_list: list):
+        """
+        Prints tournament details with all round details and math lists.
+        :param tournament: tournament to be shown
+        :type tournament: Tournament
+        :param match_table_list: list of tables with all matches for each round
+        :type match_table_list: list
+        :return: no return
+        :rtype:
+        """
         print("\n" + "=" * 3 + "TOURNAMENT DETAILS" + "=" * 3)
         print(f"Nom : {tournament.name}")
         print(f"Lieu : {tournament.place}")
@@ -129,8 +81,22 @@ class ReportsView:
             print("\n")
             self.print_table(match_table_list[round_list.index(tournament_round)])
 
-    def show_tournament_list(self, tournament_table):
+    def show_tournament_list(self, tournament_table: PrettyTable):
+        """
+        Prints the list of tournaments in the database as a table.
+        :param tournament_table: table containing the list of tournaments formatted for printing
+        :type tournament_table: PrettyTable
+        :return: None
+        :rtype:
+        """
         self.print_table(tournament_table)
 
-    def show_player_list(self, player_table):
+    def show_player_list(self, player_table: PrettyTable):
+        """
+        Prints the list of players in the database as a table.
+        :param player_table: table containing the list of tournaments formatted for printing
+        :type player_table: PrettyTable
+        :return: None
+        :rtype:
+        """
         self.print_table(player_table)

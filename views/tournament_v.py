@@ -1,137 +1,162 @@
 
+import datetime
 
-class View:
-    # def program_file_created(self, path):
-    #     print(f"Fichier de programme créé : \n{path}")
 
-    # def program_file_already_exists(self, path):
-    #     print(f"Nous avons trouvé le fichier de programme : \n{path}")
+class TournamentView:
+    """
+    Tournament module view.
+    """
 
-    # def program_file_empty(self):
-    #     print('Aucune information contenue dans le fichier de programme')
-
-    @staticmethod
-    def prompt_for_main_menu_choice(program_status):
-        program_file_empty = program_status[0]
-        ongoing_tournament = program_status[1]
-        existing_report_data = program_status[2]
-        print(f"\nBienvenue au menu principal")
-        # if empty file the only option is to create a nez tournament
-        if program_file_empty:
-            input("Appuyez sur entrée pour démarrer un nouveau tournoi\n")
-            result = 0
-        # if ongoing_tournament but no existing report data the only option is to carry-on with the tournament
-        elif ongoing_tournament and not existing_report_data:
-            input("Appuyez sur entrée pour continuer le tournoi en cours\n")
-            result = 1
-        # if ongoing_tournament and existing_report_data : carry-on with tournament or consult reports
-        elif ongoing_tournament and existing_report_data:
-            print("Veuillez choisir une option :")
-            option = input("1 - Continuer le tournoi en cours \n"
-                           "2 - Consulter les rapports du programme \n")
-            if int(option) == 1:
-                result = 1
-            else:
-                result = 2
-        # if NO ongoing_tournament and existing_report_data : new tournament or consult reports
-        elif not ongoing_tournament and existing_report_data:
-            print("Veuillez choisir une option :")
-            option = input("1 - Démarrer un nouveau tournoi \n"
-                           "2 - Consulter les rapports du programme\n")
-            if int(option) == 1:
-                result = 0
-            else:
-                result = 2
-        return result
-
-    @staticmethod
-    def prompt_for_tournament_creation():
+    def prompt_for_tournament_creation(self) -> dict:
+        """
+        User inputs for tournament creation
+        :return: tournament data
+        :rtype: dict
+        """
         tournament_data = {}
         input_data = input("\nVeuillez saisir le nom du tournoi :\n")
         tournament_data['name'] = input_data
         input_data = input("Veuillez saisir le lieu du tournoi :\n")
         tournament_data['place'] = input_data
         print("Veuillez saisir la date de début du tournoi :")
-        start_date_day = input("Jour (jj) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        start_date_month = input("Mois (mm) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        start_date_year = input("Année (aaaa) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        input_data = f"{start_date_day}/{start_date_month}/{start_date_year}"
-        tournament_data['start_date'] = input_data
+        start_date = self.prompt_for_date_input()
+        tournament_data['start_date'] = start_date
         print("Veuillez saisir la date de fin du tournoi :")
-        end_date_day = input("Jour (jj) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        end_date_month = input("Mois (mm) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        end_date_year = input("Année (aaaa) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        # TODO: contrôler que date de fin > date de début
-        input_data = f"{end_date_day}/{end_date_month}/{end_date_year}"
-        tournament_data['end_date'] = input_data
-        rounds = input("Veuillez saisir le nombre de tours du tournoi (4 par défaut) :\n")
-        try:
-            input_data = int(rounds)
-        except ValueError:
-            input_data = 4
-            print("Tournoi à 4 tours")
-        finally:
-            tournament_data['rounds'] = input_data
-        input_data = input("Veuillez saisir une description du tournoi :\n")
-        tournament_data['description'] = input_data
+        end_date = self.prompt_for_date_input()
+        tournament_data['end_date'] = end_date
+        rounds_input = "c"
+        rounds = 4
+        while not (rounds_input.isnumeric() or rounds_input == ""):
+            rounds_input = input("Veuillez saisir le nombre de tours du tournoi (4 par défaut) :\n")
+            if rounds_input == "":
+                rounds = 4
+            else:
+                try:
+                    rounds = int(rounds_input)
+                except ValueError:
+                    print("Input needs to be numeric or an empty field")
+        tournament_data['rounds'] = rounds
+        description = input("\nVeuillez saisir une description du tournoi :\n")
+        tournament_data['description'] = description
 
         return tournament_data
 
     @staticmethod
-    def prompt_for_national_chess_identifier():
+    def prompt_for_date_input() -> str:
+        """
+        Function for data input with format controls
+        :return: Input date in datetime format
+        :rtype: str
+        """
+        day = 32
+        month = 13
+        year = 0000
+        while day not in range(1, 32, 1):
+            try:
+                day = int(input("Jour (jj) : "))
+                if day not in range(1, 32, 1):
+                    print(f"{day} n'est pas dans l'intervalle de valeurs 1 - 31. Veuillez recommencer à nouveau.")
+            except ValueError:
+                print("Il faut saisir une valeur numérique")
+        while month not in range(1, 13, 1):
+            try:
+                month = int(input("Mois (mm) : "))
+                if month not in range(1, 13, 1):
+                    print(f"{month} n'est pas dans l'intervalle de valeurs 1 - 12. Veuillez recommencer à nouveau.")
+            except ValueError:
+                print("Il faut saisir une valeur numérique")
+        while year not in range(1800, 9999, 1):
+            try:
+                year = int(input("Year (yyyy) : "))
+                if year not in range(1800, 9999, 1):
+                    print(f"{year} n'est pas dans l'intervalle de valeurs 2023 - 9999. Veuillez recommencer à nouveau.")
+            except ValueError:
+                print("Il faut saisir une valeur numérique")
+        date = datetime.date(year, month, day)
+        return date
+
+    @staticmethod
+    def prompt_for_national_chess_identifier() -> str:
+        """
+        Asks user to input national_chess_identifier and turns it into capital letters
+        :return: national chess identifier
+        :rtype: str
+        """
         national_chess_identifier = input(
             "\nVeuillez rentrer le numéro d'identification d'échecs du joueur à inscrire au tournoi :\n"
         )
         national_chess_identifier_upper = national_chess_identifier.upper()
         return national_chess_identifier_upper
 
-    @staticmethod
-    def prompt_for_player_data():
+    def prompt_for_player_data(self) -> dict:
+        """
+        Asks user to input new player data
+        :return: player data for Player object
+        :rtype: dict
+        """
         player_data = {}
         input_data = input("Veuillez rentrer le prénom du joueur:\n")
         player_data['first_name'] = input_data
         input_data = input("Veuillez rentrer le nom de famille du joueur:\n")
         player_data['last_name'] = input_data
         print("Veuillez rentrer la date de naissance du joueur : \n")
-        birth_date_day = input("Jour (jj) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        birth_date_month = input("Mois (mm) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        birth_date_year = input("Année (aaaa) : ")
-        # TODO: contrôler qu'il s'agit du bon input
-        # TODO: contrôler que date de fin > date de début
-        input_data = f"{birth_date_day}/{birth_date_month}/{birth_date_year}"
-        player_data['birth_date'] = input_data
+        birth_date = self.prompt_for_date_input()
+        player_data['birth_date'] = birth_date
         return player_data
 
     @staticmethod
-    def prompt_for_new_player_options():
+    def prompt_for_new_player_options() -> str:
+        """
+        Asks user what to do as long as there aren't enough players or that the number of players is not even
+        :return: User choice : main menu or adding new player
+        :rtype: str
+        """
         print("\nVous n'êtes pas suffisamment nombreux ou pas un nombre pair de joueurs.")
         print("Que souhaitez-vous faire ?")
-        choice = input("1 - Revenir au menu principal\n"
-                       "2 - Ajouter un nouveau joueur\n")
+        while True:
+            choice = input("1 - Revenir au menu principal\n"
+                           "2 - Ajouter un nouveau joueur\n")
+            if choice in ["1", "2"]:
+                break
         return choice
 
     @staticmethod
-    def prompt_for_running_tournament_options():
+    def prompt_for_running_tournament_options() -> str:
+        """
+        Asks user what to do once there are enough players and that the number of players is even
+        :return: User choice : main menu / add new player / launch tournament
+        :rtype: str
+        """
         print("\nVous êtes suffisamment nombreux et un nombre pair de joueurs.")
         print("Que souhaitez-vous faire ?")
-        choice = input("1 - Revenir au menu principal\n"
-                       "2 - Ajouter un nouveau joueur\n"
-                       "3 - Lancer le tournoi\n")
+        while True:
+            choice = input("1 - Revenir au menu principal\n"
+                           "2 - Ajouter un nouveau joueur\n"
+                           "3 - Lancer le tournoi\n")
+            if choice in ["1", "2", "3"]:
+                break
         return choice
 
     @staticmethod
-    def prompt_for_new_player():
-        choice = input("\nVoulez-vous inscrire un nouveau joueur ? (y/n)\n")
+    def prompt_for_new_player() -> str:
+        """
+        Asks user if he/she wants to sign-in a new player
+        :return: user choice : y/n sign-in new player
+        :rtype: str
+        """
+        while True:
+            choice = input("\nVoulez-vous inscrire un nouveau joueur ? (y/n)\n")
+            if choice in ["y", "n"]:
+                break
         return choice
 
     @staticmethod
-    def show_player_already_signed_in(national_chess_identifier):
+    def show_player_already_signed_in(national_chess_identifier: str):
+        """
+        Prints message explaining that a national_chess_identifier is already used
+        :param national_chess_identifier: player national_chess_identifier to be printed in the message
+        :type national_chess_identifier: str
+        :return: None
+        :rtype:
+        """
         print(f"Le joueur {national_chess_identifier} est déjà inscrit au tournoi")
