@@ -12,7 +12,7 @@ class ControlProgramFile:
     """
     PROGRAM_FILE_FOLDER_PATH = os.path.abspath("./data")
     PROGRAM_FILE_NAME = "chess_tournament_manager.json"
-    PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}\\{PROGRAM_FILE_NAME}"
+    PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}/{PROGRAM_FILE_NAME}"
     program_file = None
 
     def evaluate_program_status(self, program_file: ProgramData):

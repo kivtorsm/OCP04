@@ -20,10 +20,6 @@ class TournamentController:
     Controller for the running tournament module
     """
 
-    PROGRAM_FILE_FOLDER_PATH = os.path.abspath("./data")
-    PROGRAM_FILE_NAME = "chess_tournament_manager.json"
-    PROGRAM_FILE_PATH = f"{PROGRAM_FILE_FOLDER_PATH}\\{PROGRAM_FILE_NAME}"
-
     def __init__(self,
                  view: TournamentView,
                  round_view: RoundView,
@@ -152,16 +148,12 @@ class TournamentController:
         tournament = program_file.get_last_tournament()
 
         while run_tournament:
-            enough_players \
-                = self.tournament_controls.\
-                does_tournament_has_minimum_number_of_players(program_file)
-            even_number_of_players = self.tournament_controls.\
-                is_player_count_even(program_file)
-            if tournament.status == "signing-in players" and \
-                    add_new_player is False:
 
-                # Different menu depending on the evaluation of minimum
-                # number of players et total players = even
+            if tournament.status == "signing-in players" and add_new_player is False:
+                enough_players = self.tournament_controls.does_tournament_has_minimum_number_of_players(program_file)
+                even_number_of_players = self.tournament_controls.is_player_count_even(program_file)
+
+                # Different menu depending on the evaluation of minimum number of players et total players = even
                 if not enough_players or not even_number_of_players:
                     option = self.view.prompt_for_new_player_options()
                 else:
@@ -185,7 +177,7 @@ class TournamentController:
             elif tournament.status == "running":
                 self.play_tournament(program_file)
             else:
-                pass
+                break
 
     def play_current_round(self, program_file: ProgramData):
         """
@@ -200,11 +192,11 @@ class TournamentController:
             self.round_view.prompt_for_start_round(current_round.round_number)
             self.program_file_controls.start_current_round(program_file)
         else:
-            is_round_finished \
-                = self.round_controls.is_round_finished(program_file)
+            is_round_finished = self.round_controls.is_round_finished(program_file)
             if not is_round_finished:
                 self.round_controls.set_match_score(program_file)
             else:
+                self.program_file_controls.end_current_round(program_file)
                 program_file.increase_round_number()
 
     def play_tournament(self, program_file: ProgramData):
@@ -215,8 +207,7 @@ class TournamentController:
         :return: nothing
         :rtype:
         """
-        is_current_round_initialised \
-            = self.round_controls.is_current_round_initialised(program_file)
+        is_current_round_initialised = self.round_controls.is_current_round_initialised(program_file)
         is_last_round = self.round_controls.is_last_round(program_file)
         if not is_last_round:
             if not is_current_round_initialised:
@@ -225,6 +216,5 @@ class TournamentController:
                 self.play_current_round(program_file)
         else:
             finished_tournament = program_file.get_last_tournament()
-            finished_tournament.status = " finished"
+            finished_tournament.status = "finished"
             program_file.update_json_file()
-            pass
