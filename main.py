@@ -1,10 +1,10 @@
 # coding: utf-8
 
-from controllers.control_program_file import ControlProgramFile
-from controllers.control_tournament import ControlTournament
-from controllers.control_round import ControlRound
-from controllers.control_tournament_player import ControlTournamentPlayer
-from controllers.tournament_controller import TournamentController
+from controllers.program_file_c import ControlProgramFile
+from controllers.tournament_c import ControlTournament
+from controllers.round_c import ControlRound
+from controllers.tournament_player_c import ControlTournamentPlayer
+from controllers.run_tournament_c import TournamentController
 from controllers.reports_c import ReportsController
 from controllers.menu_c import MenuController
 
