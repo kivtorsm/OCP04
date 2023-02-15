@@ -137,7 +137,7 @@ class ReportsController:
         for match in round_match_list:
             table.add_row(
                 [
-                    round_match_list.index(match),
+                    round_match_list.index(match) + 1,
                     match.get_player_national_chess_identifier(0),
                     match.get_player_score(0),
                     match.get_player_score(1),
