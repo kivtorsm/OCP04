@@ -5,13 +5,20 @@ from models.json_file import ProgramData
 from models.tournament import Tournament
 from models.round import Round
 
-from controllers.control_program_file import ControlProgramFile
+from controllers.program_file_c import ControlProgramFile
 
 from views.reports_v import ReportsView
 
 
 class ReportsController:
-    def __init__(self, program_file: ProgramData, program_file_control: ControlProgramFile, reports_view: ReportsView):
+    """
+    Controller for the reporting module
+    """
+    def __init__(
+            self,
+            program_file: ProgramData,
+            program_file_control: ControlProgramFile,
+            reports_view: ReportsView):
 
         # Models
         self.program_file = program_file
@@ -31,7 +38,11 @@ class ReportsController:
         table = PrettyTable()
         player_dict = self.program_file.get_player_dict()
         list_of_players = player_dict.values()
-        table.field_names = ["# ID échecs", "Nom", "Prénom", "Date de naissance"]
+        table.field_names = [
+            "# ID échecs",
+            "Nom",
+            "Prénom",
+            "Date de naissance"]
         for player in list_of_players:
             table.add_row(
                 [
@@ -52,7 +63,14 @@ class ReportsController:
         """
         table = PrettyTable()
         tournament_list = self.program_file.get_tournament_list()
-        table.field_names = ["#", "Nom", "Lieu", "Date début", "Date fin", "Rounds", "État"]
+        table.field_names = [
+            "#",
+            "Nom",
+            "Lieu",
+            "Date début",
+            "Date fin",
+            "Rounds",
+            "État"]
         for tournament in tournament_list:
             index = tournament_list.index(tournament) + 1
             status_dict = {
@@ -74,10 +92,13 @@ class ReportsController:
         return table
 
     @staticmethod
-    def create_tournament_player_list_table(tournament: Tournament) -> PrettyTable:
+    def create_tournament_player_list_table(tournament: Tournament) -> \
+            PrettyTable:
         """
-        Creates and returns a list of players signed-in a tournament in printing format
-        :param tournament: tournament for which the player list has to be printed
+        Creates and returns a list of players signed-in a tournament
+        in printing format
+        :param tournament: tournament for which the player
+        list has to be printed
         :type tournament: Tournament
         :return: list of a tournament players formatted for printing
         :rtype: PrettyTable
@@ -98,7 +119,8 @@ class ReportsController:
     @staticmethod
     def create_match_list_table(tournament_round: Round):
         """
-        Creates and returns a list of matches inside a round of a defined tournament
+        Creates and returns a list of matches inside a round of a
+        defined tournament
         :param tournament_round: for which the player list has to be printed
         :type tournament_round: Round
         :return: list of a tournament players formatted for printing
@@ -106,7 +128,12 @@ class ReportsController:
         """
         table = PrettyTable()
         round_match_list = tournament_round.get_match_list()
-        table.field_names = ["#", "Player 1", "Score P1", "Score P2", "Player 2"]
+        table.field_names = [
+            "#",
+            "Player 1",
+            "Score P1",
+            "Score P2",
+            "Player 2"]
         for match in round_match_list:
             table.add_row(
                 [
@@ -121,15 +148,20 @@ class ReportsController:
 
     def run_tournament_list_report_menu(self):
         """
-        Proposes menu after the tournament list report and generates tournament details report
+        Proposes menu after the tournament list report and generates
+        tournament details report
         :return: none
         :rtype:
         """
         # Save number of tournaments
-        tournament_list_length = self.program_file_control.get_number_of_tournaments()
+        tournament_list_length = \
+            self.program_file_control.get_number_of_tournaments()
 
-        # Ask for user decision : 0 -> main menu, # -> show tournament # details report
-        choice = self.reports_view.prompt_for_tournament_list_report_choice(tournament_list_length)
+        # Ask for user decision : 0 -> main menu, # ->
+        # show tournament # details report
+        choice = \
+            self.reports_view.prompt_for_tournament_list_report_choice(
+                tournament_list_length)
         if choice == 0:
             pass
         # when choice is different from 0, generate tournament details report
@@ -141,9 +173,10 @@ class ReportsController:
             # get tournament round list
             tournament_round_list = tournament.get_round_list()
             match_table_list = []
-            # for each round, generate a PrettyFormat table with the match data and append it to a list of match tables
+            # for each round, generate a PrettyFormat table with the match
+            # data and append it to a list of match tables
             for tournament_round in tournament_round_list:
-                # generate prettyformat match table
+                # generate PrettyFormat match table
                 match_table = self.create_match_list_table(tournament_round)
                 # append table to match table list
                 match_table_list.append(match_table)
@@ -169,4 +202,3 @@ class ReportsController:
         tournament_list_table = self.create_tournament_list_table()
         self.reports_view.show_tournament_list(tournament_list_table)
         self.run_tournament_list_report_menu()
-
