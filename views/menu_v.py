@@ -84,8 +84,7 @@ class MenuView:
             while option not in [str(1), str(2)]:
                 print("Veuillez choisir une option :")
                 option = input("1 - Continuer le tournoi en cours \n"
-                               "2 - Consulter la liste des joueurs "
-                               "inscrits dans la base des données \n")
+                               "2 - Consulter la liste des joueurs inscrits dans la base des données \n")
                 try:
                     if int(option) == 1:
                         result = 1
@@ -93,8 +92,7 @@ class MenuView:
                         result = 2
                 except ValueError:
                     pass
-        # if ongoing tournament -> carry-on
-        # if not existing data plater -> 1 report option
+        # if ongoing tournament -> carry-on if not existing data plater -> 1 report option
         elif ongoing_tournament and existing_tournament_data and not \
                 existing_player_data:
             while option not in [str(1), str(3)]:
@@ -115,8 +113,7 @@ class MenuView:
             while option not in [str(1), str(2)]:
                 print("Veuillez choisir une option :")
                 option = input("1 - Démarrer un nouveau tournoi \n"
-                               "2 - Consulter la liste des joueurs inscrits "
-                               "dans la base des données \n")
+                               "2 - Consulter la liste des joueurs inscrits dans la base des données \n")
                 try:
                     if int(option) == 1:
                         result = 0

@@ -13,7 +13,7 @@ class RoundView:
         :return: None
         :rtype:
         """
-        input(f"\nAppuie sur entrée pour démarrer le Round {round_number}")
+        input(f"\nTapez sur entrée pour démarrer le Round {round_number}")
 
     @staticmethod
     def prompt_for_score_input(player1_national_chess_identifier: str):
