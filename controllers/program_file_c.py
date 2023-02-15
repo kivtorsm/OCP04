@@ -21,7 +21,9 @@ class ControlProgramFile:
         indicating:
         1 - if the file is empty
         2 - if there is an ongoing tournament
-        3 - inf there is existing report data : tournaments or players
+        3 - if there is existing report data : tournaments or players
+        4 - if there is existing player reporting data
+        5 - if there is existing tournament reporting data
         :return: list of booleans [file_is_empty, ongoing_tournament,
         existing_report_data]
         :rtype: list
@@ -33,10 +35,8 @@ class ControlProgramFile:
             file_is_empty = self.program_file_is_empty()
             ongoing_tournament = self.ongoing_tournament_exists(program_file)
             existing_player_data = self.player_data_exists(program_file)
-            existing_tournament_data = \
-                self.tournament_data_exists(program_file)
-            existing_report_data = \
-                existing_player_data or existing_tournament_data
+            existing_tournament_data = self.tournament_data_exists(program_file)
+            existing_report_data = existing_player_data or existing_tournament_data
 
             if not file_is_empty:
                 result = [
@@ -113,7 +113,7 @@ class ControlProgramFile:
         if self.tournament_data_exists(program_file):
             last_tournament = program_file.get_last_tournament()
             last_tournament_status = last_tournament.status
-            return last_tournament_status == "finished"
+            return last_tournament_status != "finished"
 
     @staticmethod
     def is_player_in_database(
