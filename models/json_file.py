@@ -27,7 +27,7 @@ class ProgramData:
         """
         Updates json program file
         :return: None
-        :rtype: None
+        :rtype:
         """
         try:
             with open(self.file_path, "r+") as file:
@@ -37,16 +37,14 @@ class ProgramData:
         except FileNotFoundError:
             print(f'fichier {self.file_path} inexistant')
 
-    def erase_file_data(self):
-        """
-        Erases tournament json file data
-        :return: None
-        :rtype: None
-        """
-        with open(self.file_path, 'w'):
-            pass
-
     def add_new_tournament(self, tournament: Tournament):
+        """
+        Adds new tournament in position 0 of the tournament list
+        :param tournament: tournament to be added
+        :type tournament: Tournament
+        :return: None
+        :rtype:
+        """
         self.tournament_list.insert(0, tournament)
         self.ongoing_tournament = True
         self.update_json_file()
@@ -55,18 +53,19 @@ class ProgramData:
         """
         Signs-in the tournament a given player
         :param player: player to be signed-in the tournament
-        :type player: player
+        :type player: Player
         :return: None
-        :rtype: None
+        :rtype:
         """
         self.player_dict[player.national_chess_identifier] = player
         self.update_json_file()
 
     def update_data_object_from_json(self):
         """
-        Updates tournament object with json file data and returns it as an object
+        Updates tournament object with json file data and returns it
+        as an object
         :return: None
-        :rtype: None
+        :rtype:
         """
         try:
             with open(self.file_path, "r") as file:
@@ -87,37 +86,48 @@ class ProgramData:
                         status=tournament_data['status']
                     )
                     for json_round in tournament_data['round_list']:
-                        # Initialise round object for each item of the round list
+                        # Initialise round object for each item of the
+                        # round list
                         tournament_round = Round(
                             round_number=json_round['round_number'],
                             start_datetime=json_round['start_datetime'],
                             end_datetime=json_round['end_datetime'],
                             next_match=json_round['next_match']
                         )
-                        # For each match in the json file create object Match and append to match list
+                        # For each match in the json file create object
+                        # Match and append to match list
                         for json_match in json_round['match_list']:
                             match_data = json_match['match_data']
                             match = Match(match_data[0], match_data[1])
                             # Append match to the tournament round
                             tournament_round.match_list.append(match)
-                        # Insert round in the round list round's position (round_number -1)
-                        tournament.round_list[int(json_round['round_number']) - 1] = tournament_round
+                        # Insert round in the round list round's
+                        # position (round_number -1)
+                        tournament.round_list[int(json_round['round_number'])
+                                              - 1] = tournament_round
                     # save players list
                     tournament.player_list = tournament_data['player_list']
                     for value in tournament_data['player_dict'].values():
                         player_in_tournament = PlayerInTournament(
-                            national_chess_identifier=value['national_chess_identifier'],
+                            national_chess_identifier=value[
+                                'national_chess_identifier'],
                             score=value['score'],
                             has_played=value['has_played']
                         )
-                        tournament.player_dict[player_in_tournament.national_chess_identifier] = player_in_tournament
+                        tournament.player_dict[
+                            player_in_tournament.national_chess_identifier] \
+                            = player_in_tournament
                     # append tournament to tournament program file
                     self.tournament_list.append(tournament)
 
-                # parse player_dict values in order to create player objects and add them to the program file
+                # parse player_dict values in order to create player objects
+                # and add them to the program file
                 for value in player_dict.values():
-                    player = Player(value['first_name'], value['last_name'], value['birth_date'],
-                                    value['national_chess_identifier'])
+                    player = Player(
+                        value['first_name'],
+                        value['last_name'],
+                        value['birth_date'],
+                        value['national_chess_identifier'])
                     # create dict entry with player object
                     self.player_dict[player.national_chess_identifier] = player
 
@@ -128,38 +138,46 @@ class ProgramData:
             print(f'fichier {self.file_path} inexistant')
 
     def get_player(self, national_chess_identifier: str) -> Player:
+        """
+        Call to get a player with a given national_chess_identifier
+        :param national_chess_identifier: national chess identifier of
+        the player we want to obtain
+        :type national_chess_identifier: str
+        :return: player corresponding to the national chess identifier
+        given as a parameter
+        :rtype: Player
+        """
         player = self.player_dict[national_chess_identifier]
         return player
 
     def update_ongoing_tournament(self, tournament: Tournament):
+        """
+
+        :param tournament:
+        :type tournament:
+        :return: None
+        :rtype:
+        """
         self.tournament_list[0] = tournament
         self.update_json_file()
 
     def get_last_tournament(self) -> Tournament:
+        """
+        Returns last tournament added to the tournament list
+        (last tournament added in time)
+        :return: last tournament added to the program
+        :rtype: Tournament
+        """
         tournament_list = self.tournament_list
         last_tournament = tournament_list[0]
         return last_tournament
 
-    def set_score(self, round_number: int, match_number: int, score_player1: list, score_player2: list):
-        # Updating tournament matchs
-        current_tournament = self.get_last_tournament()
-        current_tournament.set_score(round_number, match_number, score_player1, score_player2)
-
-        # updating player's score
-        national_chess_id_player1 = score_player1[0]
-        national_chess_id_player2 = score_player2[0]
-        score1 = score_player1[1]
-        score2 = score_player2[1]
-        player1 = self.get_player(national_chess_id_player1)
-        player2 = self.get_player(national_chess_id_player2)
-        player1.set_score(score1)
-        player2.set_score(score2)
-
-        # updating player's opponent "has_played" list
-        player1.set_has_played(player2)
-        player2.set_has_played(player1)
-
     def start_tournament(self):
+        """
+        Launches tournament after the signing-in phase
+        :return: None
+        :rtype:
+        """
         tournament = self.get_last_tournament()
         # set tournament status to "running"
         tournament.set_status_running()
@@ -168,15 +186,27 @@ class ProgramData:
         self.update_json_file()
 
     def get_current_round(self) -> Round:
+        """
+        Returns ongoing round
+        :return: ongoing round
+        :rtype: Round
+        """
         try:
             last_tournament = self.get_last_tournament()
             current_round_number = last_tournament.current_round
             current_round = last_tournament.round_list[current_round_number-1]
             return current_round
-        except IndexError as error:
-            return None
+        except IndexError:
+            pass
 
     def set_tournament_round_match_list(self, match_list: list):
+        """
+        Updates the match list of a round
+        :param match_list: list of matches to be set in a round
+        :type match_list: list
+        :return: nothing
+        :rtype:
+        """
         # get ongoing tournament
         tournament = self.get_last_tournament()
         # set ongoing tournament match list
@@ -185,17 +215,40 @@ class ProgramData:
         self.update_ongoing_tournament(tournament)
 
     def increase_round_number(self):
+        """
+        Increases the round number of the ongoing tournament
+        :return: nothing
+        :rtype:
+        """
         ongoing_tournament = self.get_last_tournament()
         ongoing_tournament.increase_round_number()
         self.update_json_file()
 
-    def get_player_dict(self):
+    def get_player_dict(self) -> dict:
+        """
+        Returns the player dict of the program
+        :return: player dict with all players saved in the program
+        :rtype: dict
+        """
         return self.player_dict
 
-    def get_tournament_list(self):
+    def get_tournament_list(self) -> list:
+        """
+        Returns the list of tournaments saved in the program file
+        :return: tournament list
+        :rtype: list
+        """
         return self.tournament_list
 
-    def get_tournament(self, tournament_position):
+    def get_tournament(self, tournament_position: int) -> Tournament:
+        """
+        Retourns a tournament in a given position of the tournament list
+        :param tournament_position: position in the list for which we want
+        to get the tournament
+        :type tournament_position: int
+        :return: tournament objet saved in the position given as a parameter
+        :rtype: Tournament
+        """
         tournament_list = self.get_tournament_list()
         return tournament_list[tournament_position]
 

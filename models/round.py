@@ -7,7 +7,14 @@ from models.match import Match
 
 
 class Round:
-    def __init__(self, round_number, start_datetime=0, end_datetime=0, match_list=[], next_match=1):
+    def __init__(
+            self,
+            round_number,
+            start_datetime=0,
+            end_datetime=0,
+            match_list=[],
+            next_match=1
+    ):
         self.name = f"Round {round_number}"
         self.round_number = round_number
         self.start_datetime = start_datetime
@@ -22,7 +29,7 @@ class Round:
         """
         Sets round start date_time
         :return: None
-        :rtype: None
+        :rtype:
         """
         self.start_datetime = datetime.datetime.now().isoformat()
 
@@ -30,7 +37,7 @@ class Round:
         """
         Sets round end date_time
         :return: None
-        :rtype: None
+        :rtype:
         """
         self.end_datetime = datetime.datetime.now().isoformat()
 
@@ -42,12 +49,14 @@ class Round:
         :param match_list: list of matche sof the round to be set for the round
         :type match_list: list
         :return: None
-        :rtype: None
+        :rtype:
         """
-        number_of_matches_per_round = tournament.get_number_of_matches_per_round()
+        number_of_matches_per_round = \
+            tournament.get_number_of_matches_per_round()
         # For each match, we update de list of matches
         for match_number in range(number_of_matches_per_round):
-            # A match list is formed of a list of pairs that will confront in a match
+            # A match list is formed of a list of pairs that will
+            # confront in a match
             pair = match_list[match_number]
             # Each pair is formed of a list of 2 players
             player1 = pair[0]
@@ -56,7 +65,6 @@ class Round:
             match = Match(player1, player2)
             # The match is added to the round match list
             self.match_list.append(match)
-    #     TODO : Comprendre pourquoi ça remplit tous les rounds du tournoi
 
     def get_match_list(self):
         """
@@ -68,11 +76,9 @@ class Round:
 
     def increment_next_match(self):
         """
-        Increments the next_match attribute to indicate which match is to be played next
+        Increments the next_match attribute to indicate which match is
+        to be played next
         :return: None
-        :rtype: None
+        :rtype:
         """
         self.next_match += 1
-
-    def set_current_match_score(self, match_score):
-        self.match_list[self.next_match - 1] = match_score

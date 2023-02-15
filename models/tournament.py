@@ -1,7 +1,6 @@
 # coding: utf-8
 
 import json
-import os
 
 from models.round import Round
 from models.player_in_tournament import PlayerInTournament
@@ -46,21 +45,23 @@ class Tournament:
         """
         Increases the current round count
         :return: None
-        :rtype: None
+        :rtype:
         """
         self.current_round += 1
 
     def sign_in_player(self, national_chess_identifier: str):
         """
         Signs-in the tournament a given player
-        :param national_chess_identifier: national chess identifier of the player to be signed-in
+        :param national_chess_identifier: national chess identifier of the
+        player to be signed-in
         :type national_chess_identifier: str
         :return: None
-        :rtype: None
+        :rtype:
         """
         self.player_list.append(national_chess_identifier)
         player_in_tournament = PlayerInTournament(national_chess_identifier)
-        self.player_dict[player_in_tournament.national_chess_identifier] = player_in_tournament
+        self.player_dict[player_in_tournament.national_chess_identifier] \
+            = player_in_tournament
 
     def get_number_of_players(self):
         """
@@ -105,8 +106,10 @@ class Tournament:
 
     def set_round_match_list(self, match_list):
         """
-        Updates the list of matches of a given round with a new given list of matches
-        :param match_list: the updated list of matches to set in the round match list
+        Updates the list of matches of a given round with a new given
+        list of matches
+        :param match_list: the updated list of matches to set in the
+        round match list
         :type match_list: list
         :return: No return
         :rtype: None
@@ -114,9 +117,7 @@ class Tournament:
         # create round object
         current_round = self.current_round
         tournament_round = self.round_list[current_round-1]
-        # update round with json data
-        # tournament_round.set_match_list(self, match_list)
-        # TODO : comprendre pourquoi ça remplit tous les rounds
+        # update round match list
         tournament_round.match_list = match_list
         # update tournament with round object
         self.round_list[current_round - 1] = tournament_round
@@ -135,7 +136,8 @@ class Tournament:
     def get_round_match_list(self, round_number) -> list:
         """
         Returns the match list from a specific round
-        :param round_number: the round number for which we want the list of matches
+        :param round_number: the round number for which we want the list
+        of matches
         :type round_number: int
         :return: list of matches for a specified round
         :rtype: list
@@ -143,55 +145,53 @@ class Tournament:
         tournament_round = self.round_list[round_number - 1]
         return tournament_round.match_list
 
-    def set_score(self, round_number: int, match_number: int, score_player1: list, score_player2: list):
-        """
-        Updates a given match score in a given round as well as concerned players' scores
-        :param program_data: program current data
-        :type program_data: ProgramData
-        :param round_number: ongoing round number
-        :type round_number: int
-        :param match_number: played match number
-        :type match_number: int
-        :param score_player1: 2-elements list containing [player national_chess_ID: str, score: float]
-        :type score_player1: list
-        :param score_player2: 2-elements list containing [player nationa_chess_ID: str, score: float]
-        :type score_player2: list
-        :return: None
-        :rtype: None
-        """
-        # saving Round object in variable
-        tournament_round = self.round_list[round_number - 1]
-
-        # saving match object invariable
-        match = tournament_round.match_list[match_number - 1]
-
-        # setting match players' score
-        match.set_score(score_player1, score_player2)
-
-        # updating the match in the round match list
-        tournament_round.match_list[match_number - 1] = match
-
-        # updating the round in the tournament round list
-        self.round_list[round_number - 1] = tournament_round
-
     def set_status_running(self):
+        """
+        Sets tournament status to running
+        :return: nothing
+        :rtype:
+        """
         self.status = "running"
 
     def set_round_start_time(self):
+        """
+        Sets round start time to the current time
+        :return: nothing
+        :rtype:
+        """
         current_round = self.get_round(self.current_round)
         current_round.set_start_time()
         self.round_list[self.current_round - 1] = current_round
 
     def set_round_end_time(self):
-        current_round = self.get_round()
+        """
+        Sets round end time to the current time
+        :return: nothing
+        :rtype:
+        """
+        current_round_number = self.current_round
+        current_round = self.get_round(current_round_number)
         current_round.set_end_time()
         self.round_list[self.current_round - 1] = current_round
 
-    def get_player_in_tournament(self, national_chess_identifier: str) -> PlayerInTournament:
+    def get_player_in_tournament(self, national_chess_identifier: str) \
+            -> PlayerInTournament:
+        """
+        Returns tournament player data
+        :param national_chess_identifier: national chess ID of the player
+        :type national_chess_identifier: str
+        :return: player data in tournament
+        :rtype: PlayerInTournament
+        """
         player_in_tournament = self.player_dict[national_chess_identifier]
         return player_in_tournament
 
-    def get_status_in_french(self):
+    def get_status_in_french(self) -> dict:
+        """
+        Translates tournament status into French
+        :return: tournament status translated in French
+        :rtype: str
+        """
         status_dict = {
             "signing-in players": "Inscriptions joueurs",
             "running": "En cours",
@@ -199,5 +199,10 @@ class Tournament:
         }
         return status_dict[self.status]
 
-    def get_player_dict(self):
+    def get_player_dict(self) -> dict:
+        """
+        Returns player dict from the tournament
+        :return: player dict of the tournament
+        :rtype: dict
+        """
         return self.player_dict
