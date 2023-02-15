@@ -36,8 +36,7 @@ def main():
         tournament_player_controls=control_tournament_player
     )
 
-    tournament_controller.program_file \
-        = tournament_controller.program_file_controls.charge_program_file()
+    tournament_controller.program_file = tournament_controller.program_file_controls.charge_program_file()
 
     reports_view = ReportsView()
     reports_controller = ReportsController(
@@ -55,9 +54,8 @@ def main():
     )
 
     while True:
-        program_status = tournament_controller.\
-            program_file_controls.\
-            evaluate_program_status(tournament_controller.program_file)
+        program_status = tournament_controller.program_file_controls.evaluate_program_status(
+            tournament_controller.program_file)
         main_menu_choice = menu_controller.get_main_menu_choice(program_status)
         menu_controller.run_main_menu_choice(
             tournament_controller.program_file,
