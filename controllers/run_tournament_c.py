@@ -1,7 +1,5 @@
 # coding: utf-8
 
-import os
-
 from models.json_file import ProgramData
 from models.tournament import Tournament
 from models.player import Player
