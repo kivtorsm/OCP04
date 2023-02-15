@@ -12,14 +12,14 @@ class Round:
             round_number,
             start_datetime=0,
             end_datetime=0,
-            match_list=[],
+            match_list=None,
             next_match=1
     ):
         self.name = f"Round {round_number}"
         self.round_number = round_number
         self.start_datetime = start_datetime
         self.end_datetime = end_datetime
-        self.match_list = match_list
+        self.match_list = match_list if match_list else []
         self.next_match = next_match
 
     def __str__(self):

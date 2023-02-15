@@ -5,11 +5,11 @@ class PlayerInTournament:
             self,
             national_chess_identifier,
             score=float(0),
-            has_played=[]
+            has_played=None
     ):
         self.national_chess_identifier = national_chess_identifier
         self.score = score
-        self.has_played = has_played
+        self.has_played = has_played if has_played else []
 
     def __str__(self):
         return f"{self.national_chess_identifier} " \

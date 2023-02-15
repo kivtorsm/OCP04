@@ -18,8 +18,8 @@ class Tournament:
             start_date,
             end_date,
             description,
-            player_list=[],
-            player_dict={},
+            player_list=None,
+            player_dict=None,
             rounds=4,
             status="signing-in players", current_round=0):
 
@@ -35,8 +35,8 @@ class Tournament:
         for round_number in range(self.total_rounds):
             tournament_round = Round(round_number + 1)
             self.round_list.append(tournament_round)
-        self.player_list = player_list
-        self.player_dict = player_dict
+        self.player_list = player_list if player_list else []
+        self.player_dict = player_dict if player_dict else {}
 
     def __str__(self):
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
