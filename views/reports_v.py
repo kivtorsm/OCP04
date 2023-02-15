@@ -36,10 +36,13 @@ class ReportsView:
         )
 
     @staticmethod
-    def prompt_for_tournament_list_report_choice(tournament_list_length: int) -> int:
+    def prompt_for_tournament_list_report_choice(
+            tournament_list_length: int) -> int:
         """
-        Menu after listing all tournaments. Allows user to consult details of a tournament or to go back to main menu
-        :param tournament_list_length: length of the tournament list in the database. Allows control of the input choice
+        Menu after listing all tournaments. Allows user to consult details of
+        a tournament or to go back to main menu
+        :param tournament_list_length: length of the tournament list in the
+        database. Allows control of the input choice
         :type tournament_list_length: int
         :return: Menu choice : 0 -> main menu, # -> tournament number to show
         :rtype: int
@@ -48,13 +51,15 @@ class ReportsView:
         incorrect_input_value = True
 
         while incorrect_input_value:
-            option = input("\nVeuillez saisir le numéro du tournoi à consulter ou 0 pour revenir au menu principal\n")
+            option = input("\nVeuillez saisir le numéro du tournoi à "
+                           "consulter ou 0 pour revenir au menu principal\n")
             try:
                 result = int(option)
                 if result in range(0, int(tournament_list_length) + 1):
                     incorrect_input_value = False
             except ValueError:
-                print("Veuillez saisir un nombre entier dans la limite du nombre de tournois affichés")
+                print("Veuillez saisir un nombre entier dans la limite du "
+                      "nombre de tournois affichés")
         return result
 
     def show_tournament(self, tournament: Tournament, match_table_list: list):
@@ -79,12 +84,14 @@ class ReportsView:
         for tournament_round in round_list:
             self.show_round_data(tournament_round)
             print("\n")
-            self.print_table(match_table_list[round_list.index(tournament_round)])
+            self.print_table(
+                match_table_list[round_list.index(tournament_round)])
 
     def show_tournament_list(self, tournament_table: PrettyTable):
         """
         Prints the list of tournaments in the database as a table.
-        :param tournament_table: table containing the list of tournaments formatted for printing
+        :param tournament_table: table containing the list of tournaments
+        formatted for printing
         :type tournament_table: PrettyTable
         :return: None
         :rtype:
@@ -94,7 +101,8 @@ class ReportsView:
     def show_player_list(self, player_table: PrettyTable):
         """
         Prints the list of players in the database as a table.
-        :param player_table: table containing the list of tournaments formatted for printing
+        :param player_table: table containing the list of tournaments
+        formatted for printing
         :type player_table: PrettyTable
         :return: None
         :rtype:

@@ -19,18 +19,21 @@ class RoundView:
     def prompt_for_score_input(player1_national_chess_identifier: str):
         """
         Asks user to input player's score
-        :param player1_national_chess_identifier: player's national chess identifier for which to add score
+        :param player1_national_chess_identifier: player's national
+        chess identifier for which to add score
         :type player1_national_chess_identifier: str
         :return: None
         :rtype:
         """
-        score_player1 = input(f"\nEntrez le score du joueur {player1_national_chess_identifier}\n")
+        score_player1 = input(f"\nEntrez le score du joueur "
+                              f"{player1_national_chess_identifier}\n")
         return score_player1
 
     @staticmethod
     def show_score_value_error():
         """
-        Prints score value error if the input is not an accepted value [0, 0.5, 1]
+        Prints score value error if the input is not an
+        accepted value [0, 0.5, 1]
         :return: None
         :rtype:
         """
