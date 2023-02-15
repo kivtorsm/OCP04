@@ -196,32 +196,26 @@ class ControlRound:
         # get ongoing tournament
         current_tournament = program_file.get_last_tournament()
         # get players in tournament
-        player_in_tournament1 = current_tournament.get_player_in_tournament(
-            player1_national_chess_identifier)
-        player_in_tournament2 = current_tournament.get_player_in_tournament(
-            player2_national_chess_identifier)
+        player_in_tournament1 = current_tournament.get_player_in_tournament(player1_national_chess_identifier)
+        player_in_tournament2 = current_tournament.get_player_in_tournament(player2_national_chess_identifier)
         # update players' score
         player_in_tournament1.add_score(score_player1)
         player_in_tournament2.add_score(score_player2)
         # update players' has_played opponents
-        p1_has_played_p2 = \
-            self.player_in_tournament_control.has_already_played(
+        p1_has_played_p2 = self.player_in_tournament_control.has_already_played(
                 program_file,
                 player1_national_chess_identifier,
                 player2_national_chess_identifier
             )
-        p2_has_played_p1 = \
-            self.player_in_tournament_control.has_already_played(
+        p2_has_played_p1 = self.player_in_tournament_control.has_already_played(
                 program_file,
                 player2_national_chess_identifier,
                 player1_national_chess_identifier
             )
         if not p1_has_played_p2:
-            player_in_tournament1.add_has_played(
-                player2_national_chess_identifier)
+            player_in_tournament1.add_has_played(player2_national_chess_identifier)
         if not p2_has_played_p1:
-            player_in_tournament2.add_has_played(
-                player1_national_chess_identifier)
+            player_in_tournament2.add_has_played(player1_national_chess_identifier)
 
         # increment next match counter
         current_round.increment_next_match()
