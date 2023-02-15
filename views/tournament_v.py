@@ -77,7 +77,8 @@ class TournamentView:
             except ValueError:
                 print("Il faut saisir une valeur numérique")
         date = datetime.date(year, month, day)
-        return date
+        date_isoformat = date.isoformat()
+        return date_isoformat
     # FIXME : la sérialisation n'aime pas l'objet datetime
 
     @staticmethod
