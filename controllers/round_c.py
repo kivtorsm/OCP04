@@ -97,18 +97,24 @@ class ControlRound:
         :rtype: list
         """
         current_tournament = program_file.get_last_tournament()
-        current_tournament_player_list = current_tournament.player_dict
+        print(current_tournament)
+        current_tournament_player_list = list(current_tournament.player_dict.values())
         # Shuffle players in order to randomly put together players with the
         # same score
+        print("current_tournament_player_list")
+        for player in current_tournament_player_list:
+            print(player)
         random.shuffle(list(current_tournament_player_list))
         # sort players by score
         player_list_sorted = sorted(
-            current_tournament_player_list.values(),
+            current_tournament_player_list,
             key=lambda x: x.score,
             reverse=True)
         # Initialize pairings list
         pairings = []
-
+        print("player_list_sorted")
+        for player in player_list_sorted:
+            print(player)
         # we empty the sorted player list and check for pairs until the list is empty
         while len(player_list_sorted) > 0:
 
@@ -118,7 +124,7 @@ class ControlRound:
             # Check if there is at least one remaining player that has not played the current player for which
             # we are performing the check. For that we take out position 0 from the list
             if not self.are_remaining_players_in_player_has_played(
-                    program_file, player_list_sorted.pop(0), player1.national_chess_identifier
+                    program_file, player_list_sorted[1:], player1.national_chess_identifier
             ):
 
                 # parsing all players in the list looking for a proper fit
@@ -139,6 +145,12 @@ class ControlRound:
                         # remove both players from the initial sorted player list
                         player_list_sorted.pop(count)
                         player_list_sorted.pop(0)
+                        print("player_list")
+                        for player in player_list_sorted:
+                            print(player)
+                        print("pairings")
+                        for player in pairings:
+                            print(player)
 
                         # break the for loop
                         break
@@ -150,17 +162,19 @@ class ControlRound:
                 player_list_sorted.insert(2, pairings[len(pairings) - 1])
                 pairings.pop(len(pairings) - 1)
                 pairings.pop(len(pairings) - 1)
-                print(player_list_sorted)
 
         # create match list
         match_list = []
         # each match entry will contain a group of 2 players taken in the
         # order it's provided in the pairings list
+        print(len(pairings))
         for count in range(0, len(pairings), 2):
             player1 = [pairings[count].national_chess_identifier, 0]
             player2 = [pairings[count + 1].national_chess_identifier, 0]
             match = Match(player1, player2)
             match_list.append(match)
+            for match in match_list:
+                print(match)
 
         return match_list
 
