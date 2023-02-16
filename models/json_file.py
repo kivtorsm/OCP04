@@ -109,14 +109,12 @@ class ProgramData:
                     tournament.player_list = tournament_data['player_list']
                     for value in tournament_data['player_dict'].values():
                         player_in_tournament = PlayerInTournament(
-                            national_chess_identifier=value[
-                                'national_chess_identifier'],
+                            national_chess_identifier=value['national_chess_identifier'],
                             score=value['score'],
                             has_played=value['has_played']
                         )
                         tournament.player_dict[
-                            player_in_tournament.national_chess_identifier] \
-                            = player_in_tournament
+                            player_in_tournament.national_chess_identifier] = player_in_tournament
                     # append tournament to tournament program file
                     self.tournament_list.append(tournament)
 

@@ -79,7 +79,6 @@ class TournamentView:
         date = datetime.date(year, month, day)
         date_isoformat = date.isoformat()
         return date_isoformat
-    # FIXME : la sérialisation n'aime pas l'objet datetime
 
     @staticmethod
     def prompt_for_national_chess_identifier() -> str:
