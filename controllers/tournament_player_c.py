@@ -27,8 +27,4 @@ class ControlTournamentPlayer:
         """
         current_tournament = program_file.get_last_tournament()
         player_in_tournament = current_tournament.get_player_in_tournament(player1_national_chess_identifier)
-        print("has already played")
-        print(player2_national_chess_identifier)
-        print(player_in_tournament.has_played)
-        print(player2_national_chess_identifier in player_in_tournament.has_played)
         return player2_national_chess_identifier in player_in_tournament.has_played

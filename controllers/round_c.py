@@ -184,13 +184,7 @@ class ControlRound:
         player_has_played_list = program_file.get_player_in_tournament(national_chess_identifier).has_played
         for player in player_list:
             player_id_list.append(player.national_chess_identifier)
-        # TODO : print
-        print("remaining players in player has played")
-        print(player_id_list)
-        print(player_has_played_list)
-        print(player_id_list in player_has_played_list)
         return player_id_list in player_has_played_list
-
 
     def set_match_score(self, program_file: ProgramData):
         """
