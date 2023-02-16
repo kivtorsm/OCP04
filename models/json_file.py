@@ -252,6 +252,18 @@ class ProgramData:
         tournament_list = self.get_tournament_list()
         return tournament_list[tournament_position]
 
+    def get_player_in_tournament(self, national_chess_identifier) -> PlayerInTournament:
+        """
+        Returns a player in tournament object having the national chess identifier provided in the parameters
+        :param national_chess_identifier: chess ID of the player that we want to get data from
+        :type national_chess_identifier: str
+        :return: player in tournament with the provided chess ID
+        :rtype: PlayerInTournament
+        """
+        tournament = self.get_last_tournament()
+        player_in_tournament = tournament.get_player_in_tournament(national_chess_identifier)
+        return player_in_tournament
+
 
 class MyEncoder(json.JSONEncoder):
     """"
@@ -259,4 +271,3 @@ class MyEncoder(json.JSONEncoder):
     """
     def default(self, o):
         return o.__dict__
-# ça ne sert pas vraiment ?

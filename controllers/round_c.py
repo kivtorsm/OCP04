@@ -8,6 +8,7 @@ from models.json_file import ProgramData
 
 from controllers.tournament_player_c import ControlTournamentPlayer
 
+from models.player_in_tournament import PlayerInTournament
 
 class ControlRound:
     """
@@ -100,7 +101,7 @@ class ControlRound:
         current_tournament_player_list = current_tournament.player_dict
         # Shuffle players in order to randomly put together players with the
         # same score
-        random.shuffle(list(current_tournament_player_list.values()))
+        random.shuffle(list(current_tournament_player_list))
         # sort players by score
         player_list_sorted = sorted(
             current_tournament_player_list.values(),
@@ -109,25 +110,48 @@ class ControlRound:
         # Initialize pairings list
         pairings = []
 
-        # we empty the sorted player list and check for pairs until empty
+        # we empty the sorted player list and check for pairs until the list is empty
         while len(player_list_sorted) > 0:
-            # for each 1st player in the list we will select the first player
-            # that has never been an opponent
-            for count in range(1, len(player_list_sorted), 2):
-                # check list of players until we find one that the first
-                # player in tbe list has not played against
-                if not self.player_in_tournament_control.has_already_played(
-                        program_file,
-                        player_list_sorted[0].national_chess_identifier,
-                        player_list_sorted[count].national_chess_identifier):
-                    # append both players to pairings
-                    pairings.append(player_list_sorted[0])
-                    pairings.append(player_list_sorted[count])
-                    # remove both players from the initial sorted player list
-                    player_list_sorted.pop(count)
-                    player_list_sorted.pop(0)
-                    # break the for loop
-                    break
+
+            # for each 1st player in the list we will select the first player that has never been an opponent
+            player1 = player_list_sorted[0]
+
+            # Check if there is at least one remaining player that has not played the current player for which
+            # we are performing the check. For that we take out position 0 from the list
+            if not self.are_remaining_players_in_player_has_played(
+                    program_file, player_list_sorted.pop(0), player1.national_chess_identifier
+            ):
+
+                # parsing all players in the list looking for a proper fit
+                for count in range(1, len(player_list_sorted)):
+                    # check list of players until we find one that the first player in tbe list has not played against
+                    player2 = player_list_sorted[count]
+
+                    # Check if both players have already confronted each other
+                    if not self.player_in_tournament_control.has_already_played(
+                            program_file,
+                            player1.national_chess_identifier,
+                            player2.national_chess_identifier):
+
+                        # append both players to pairings
+                        pairings.append(player_list_sorted[0])
+                        pairings.append(player_list_sorted[count])
+
+                        # remove both players from the initial sorted player list
+                        player_list_sorted.pop(count)
+                        player_list_sorted.pop(0)
+
+                        # break the for loop
+                        break
+
+            # If the list contains no player that has not been played against, program retires the last 2 standings
+            # and puts them back in the player list in 1 of the list
+            else:
+                player_list_sorted.insert(1, pairings[len(pairings) - 2])
+                player_list_sorted.insert(2, pairings[len(pairings) - 1])
+                pairings.pop(len(pairings) - 1)
+                pairings.pop(len(pairings) - 1)
+                print(player_list_sorted)
 
         # create match list
         match_list = []
@@ -140,6 +164,33 @@ class ControlRound:
             match_list.append(match)
 
         return match_list
+
+    @staticmethod
+    def are_remaining_players_in_player_has_played(
+            program_file: ProgramData, player_list: list, national_chess_identifier: str) -> bool:
+        """
+        Checks if a list of players is contained in the has_played list of a player in a tournament
+        :param program_file: program file in which program data is saved
+        :type program_file: ProgramData
+        :param player_list: player list that we want to check
+        :type player_list: list
+        :param national_chess_identifier: chess ID of a player for which we want to check the has-played list
+        :type national_chess_identifier:
+        :return: true or false, is the list of players inside the has_played list of the player for which we
+        have provided a chess ID
+        :rtype: bool
+        """
+        player_id_list = []
+        player_has_played_list = program_file.get_player_in_tournament(national_chess_identifier).has_played
+        for player in player_list:
+            player_id_list.append(player.national_chess_identifier)
+        # TODO : print
+        print("remaining players in player has played")
+        print(player_id_list)
+        print(player_has_played_list)
+        print(player_id_list in player_has_played_list)
+        return player_id_list in player_has_played_list
+
 
     def set_match_score(self, program_file: ProgramData):
         """

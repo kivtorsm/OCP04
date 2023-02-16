@@ -37,3 +37,11 @@ class PlayerInTournament:
         :rtype:
         """
         self.has_played.append(national_chess_identifier)
+
+    def get_has_played(self) -> list:
+        """
+        Returns the list of players that the player has already encountered in the tournament
+        :return: list of players already played
+        :rtype: list
+        """
+        return self.has_played
