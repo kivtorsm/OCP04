@@ -33,16 +33,16 @@ def main():
         program_file_controls=control_program_file,
         tournament_controls=control_tournament,
         round_controls=control_round,
-        tournament_player_controls=control_tournament_player
+        tournament_player_controls=control_tournament_player,
     )
 
-    tournament_controller.program_file = tournament_controller.program_file_controls.charge_program_file()
+    tournament_controller.program_file = (
+        tournament_controller.program_file_controls.charge_program_file()
+    )
 
     reports_view = ReportsView()
     reports_controller = ReportsController(
-        tournament_controller.program_file,
-        control_program_file,
-        reports_view
+        tournament_controller.program_file, control_program_file, reports_view
     )
 
     menu_view = MenuView()
@@ -50,16 +50,18 @@ def main():
     menu_controller = MenuController(
         menu_view=menu_view,
         main_controller=tournament_controller,
-        reports_controller=reports_controller
+        reports_controller=reports_controller,
     )
 
     while True:
-        program_status = tournament_controller.program_file_controls.evaluate_program_status(
-            tournament_controller.program_file)
+        program_status = (
+            tournament_controller.program_file_controls.evaluate_program_status(
+                tournament_controller.program_file
+            )
+        )
         main_menu_choice = menu_controller.get_main_menu_choice(program_status)
         menu_controller.run_main_menu_choice(
-            tournament_controller.program_file,
-            main_menu_choice
+            tournament_controller.program_file, main_menu_choice
         )
 
 
