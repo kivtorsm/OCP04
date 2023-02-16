@@ -8,7 +8,6 @@ from models.json_file import ProgramData
 
 from controllers.tournament_player_c import ControlTournamentPlayer
 
-from models.player_in_tournament import PlayerInTournament
 
 class ControlRound:
     """
