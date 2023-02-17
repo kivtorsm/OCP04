@@ -5,15 +5,18 @@ import random
 from models.tournament import Tournament
 from models.match import Match
 from models.json_file import ProgramData
+from models.player_in_tournament import PlayerInTournament
 
 from controllers.tournament_player_c import ControlTournamentPlayer
+
+from views.round_v import RoundView
 
 
 class ControlRound:
     """
     Round object controller
     """
-    def __init__(self, round_view):
+    def __init__(self, round_view: RoundView):
         # view
         self.round_view = round_view
         # controllers
@@ -96,85 +99,88 @@ class ControlRound:
         :return: lists of matches to be played in a round
         :rtype: list
         """
-        current_tournament = program_file.get_last_tournament()
-        print(current_tournament)
-        current_tournament_player_list = list(current_tournament.player_dict.values())
-        # Shuffle players in order to randomly put together players with the
-        # same score
-        print("current_tournament_player_list")
-        for player in current_tournament_player_list:
-            print(player)
-        random.shuffle(list(current_tournament_player_list))
-        # sort players by score
-        player_list_sorted = sorted(
-            current_tournament_player_list,
-            key=lambda x: x.score,
-            reverse=True)
+        # sort player list
+        player_list_sorted = self.sort_player_list_by_score(program_file)
+        # create a copy list for resetting purposes
+        copy_list = player_list_sorted.copy()
         # Initialize pairings list
         pairings = []
-        print("player_list_sorted")
+        trouble_maker_dict = {}
         for player in player_list_sorted:
-            print(player)
-        # we empty the sorted player list and check for pairs until the list is empty
+            trouble_maker_dict[player.national_chess_identifier] = 0
+
+            # we empty the sorted player list and check for pairs until the list is empty
         while len(player_list_sorted) > 0:
+            is_solution_possible = self.is_solution_possible(player_list_sorted)
+            # Check if a solution is possible, if not, change player positions in list till a solution works
+            if not is_solution_possible:
+                # identifiy the trouble maker and increase the number of positions to change in the list
+                trouble_maker = self.look_for_trouble_maker(player_list_sorted)
+                trouble_maker_dict[trouble_maker.national_chess_identifier] += 1
 
-            # for each 1st player in the list we will select the first player that has never been an opponent
-            player1 = player_list_sorted[0]
+                # reset the player list from the copy
+                player_list_sorted = copy_list.copy()
 
-            # Check if there is at least one remaining player that has not played the current player for which
-            # we are performing the check. For that we take out position 0 from the list
-            if not self.are_remaining_players_in_player_has_played(
-                    program_file, player_list_sorted[1:], player1.national_chess_identifier
-            ):
+                # modify position of all players in the trouble maker dict
+                for player in player_list_sorted:
+                    new_position = player_list_sorted.index(player) \
+                                   - trouble_maker_dict[player.national_chess_identifier]
+                    player_list_sorted.remove(player)
+                    player_list_sorted.insert(new_position, player)
 
-                # parsing all players in the list looking for a proper fit
-                for count in range(1, len(player_list_sorted)):
-                    # check list of players until we find one that the first player in tbe list has not played against
-                    player2 = player_list_sorted[count]
+                # reset the pairings list
+                pairings = []
 
-                    # Check if both players have already confronted each other
-                    if not self.player_in_tournament_control.has_already_played(
-                            program_file,
-                            player1.national_chess_identifier,
-                            player2.national_chess_identifier):
-
-                        # append both players to pairings
-                        pairings.append(player_list_sorted[0])
-                        pairings.append(player_list_sorted[count])
-
-                        # remove both players from the initial sorted player list
-                        player_list_sorted.pop(count)
-                        player_list_sorted.pop(0)
-                        print("player_list")
-                        for player in player_list_sorted:
-                            print(player)
-                        print("pairings")
-                        for player in pairings:
-                            print(player)
-
-                        # break the for loop
-                        break
-
-            # If the list contains no player that has not been played against, program retires the last 2 standings
-            # and puts them back in the player list in 1 of the list
+            # if a solution can be found
             else:
-                player_list_sorted.insert(1, pairings[len(pairings) - 2])
-                player_list_sorted.insert(2, pairings[len(pairings) - 1])
-                pairings.pop(len(pairings) - 1)
-                pairings.pop(len(pairings) - 1)
+                # for each 1st player in the list we will select the first player that has never been an opponent
+                player1 = player_list_sorted[0]
+
+                # Check if there is at least one remaining player that has not played the current player for which
+                # we are performing the check. For that we take out position 0 from the list
+                if not self.are_remaining_players_in_player_has_played(
+                        program_file, player_list_sorted[1:], player1.national_chess_identifier
+                ):
+
+                    # parsing all players in the list looking for a proper fit
+                    for count in range(1, len(player_list_sorted)):
+                        # check list of players until we find one that the first player in tbe list has not
+                        # played against
+                        player2 = player_list_sorted[count]
+
+                        # Check if both players have already confronted each other
+                        if not self.player_in_tournament_control.has_already_played(
+                                program_file,
+                                player1.national_chess_identifier,
+                                player2.national_chess_identifier):
+                            print("fonctionnement normal")
+                            print(" - avant modif")
+                            print("restants")
+                            for player in player_list_sorted:
+                                print(player)
+                            print("pairings")
+                            for player in pairings:
+                                print(player)
+                            # append both players to pairings
+                            pairings.append(player_list_sorted[0])
+                            pairings.append(player_list_sorted[count])
+
+                            # remove both players from the initial sorted player list
+                            player_list_sorted.pop(count)
+                            player_list_sorted.pop(0)
+
+                            # break the for loop
+                            break
 
         # create match list
         match_list = []
-        # each match entry will contain a group of 2 players taken in the
-        # order it's provided in the pairings list
-        print(len(pairings))
+
+        # each match entry will contain a group of 2 players taken in  order it's provided in the pairings list
         for count in range(0, len(pairings), 2):
             player1 = [pairings[count].national_chess_identifier, 0]
             player2 = [pairings[count + 1].national_chess_identifier, 0]
             match = Match(player1, player2)
             match_list.append(match)
-            for match in match_list:
-                print(match)
 
         return match_list
 
@@ -197,7 +203,8 @@ class ControlRound:
         player_has_played_list = program_file.get_player_in_tournament(national_chess_identifier).has_played
         for player in player_list:
             player_id_list.append(player.national_chess_identifier)
-        return player_id_list in player_has_played_list
+        check = all(item in player_has_played_list for item in player_id_list)
+        return check
 
     def set_match_score(self, program_file: ProgramData):
         """
@@ -312,3 +319,105 @@ class ControlRound:
         ongoing_tournament = program_file.get_last_tournament()
         return ongoing_tournament.current_round \
             > ongoing_tournament.total_rounds
+
+    @staticmethod
+    def is_solution_possible(player_list: list) -> bool:
+        """
+        Check if a solution is possible with a provided list of players
+        :param player_list: list of players for which we want to test if a solution is feasible
+        :type player_list: list
+        :return: check that no player has all other players in its has_played list
+        :rtype: bool
+        """
+        solution = True
+        for player_x in player_list:
+            remaining_players_id = []
+            for player_y in player_list[1:]:
+                remaining_players_id.append(player_y.national_chess_identifier)
+
+            check = all(item in player_x.has_played for item in remaining_players_id)
+
+            if check:
+                solution = False
+                break
+
+        return solution
+
+    @staticmethod
+    def look_for_trouble_maker(player_list: list) -> bool:
+        """
+        Looks for the trouble_maker not allowing to find a solution
+        :param player_list: list of players for which we want to test if a solution is feasible
+        :type player_list: list
+        :return: player blocking the generation of a solution
+        :rtype: bool
+        """
+        trouble_maker = None
+        for player_x in player_list:
+            remaining_players_id = []
+            for player_y in player_list[1:]:
+                remaining_players_id.append(player_y.national_chess_identifier)
+
+            check = all(item in player_x.has_played for item in remaining_players_id)
+
+            if check:
+                trouble_maker = player_x
+                break
+
+        return trouble_maker
+
+    @staticmethod
+    def sort_player_list_by_score(program_file: ProgramData) -> list:
+        """
+        Sort a list of players by score. players of the same scored are randomly sorted.
+        :param program_file: program file in which program data is saved
+        :type program_file: ProgramData
+        :return: list of players sorted by score
+        :rtype: list
+        """
+        current_tournament = program_file.get_last_tournament()
+        current_tournament_player_list = list(current_tournament.player_dict.values())
+        # Shuffle players in order to randomly put together players with the
+        # same score
+        random.shuffle(list(current_tournament_player_list))
+        # sort players by score
+        player_list_sorted = sorted(
+            current_tournament_player_list,
+            key=lambda x: x.score,
+            reverse=True)
+        return player_list_sorted
+
+
+if __name__ == "__main__":
+    player2 = PlayerInTournament(
+        national_chess_identifier="AB12345",
+        score=1,
+        has_played=["AA12345", "AD12345", "FD12345"]
+    )
+    player1 = PlayerInTournament(
+        national_chess_identifier="AA12345",
+        score=1,
+        has_played=["AB12345", "AC12345", "AD12345"]
+    )
+    player3 = PlayerInTournament(
+        national_chess_identifier="AC12345",
+        score=1,
+        has_played=["AA12345", "AF12345", "AG12345"]
+    )
+    player4 = PlayerInTournament(
+        national_chess_identifier="AD12345",
+        score=1,
+        has_played=["AA12345", "AH12345", "AE12345"]
+    )
+
+    player_list = [player1, player2, player3, player4]
+
+    round_view = RoundView()
+
+    round_controller = ControlRound(round_view)
+
+    solution_possible = round_controller.is_solution_possible(player_list)
+    trouble_maker = round_controller.look_for_trouble_maker(player_list)
+
+    print(solution_possible)
+    print(trouble_maker)
