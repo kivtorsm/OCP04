@@ -153,14 +153,7 @@ class ControlRound:
                                 program_file,
                                 player1.national_chess_identifier,
                                 player2.national_chess_identifier):
-                            print("fonctionnement normal")
-                            print(" - avant modif")
-                            print("restants")
-                            for player in player_list_sorted:
-                                print(player)
-                            print("pairings")
-                            for player in pairings:
-                                print(player)
+
                             # append both players to pairings
                             pairings.append(player_list_sorted[0])
                             pairings.append(player_list_sorted[count])
