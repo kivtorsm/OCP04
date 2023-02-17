@@ -45,8 +45,8 @@ class ControlProgramFile:
                     existing_report_data,
                     existing_player_data,
                     existing_tournament_data]
-        except FileNotFoundError as error:
-            print(error)
+        except FileNotFoundError:
+            pass
         finally:
             return result
 

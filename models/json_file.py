@@ -129,9 +129,9 @@ class ProgramData:
                     # create dict entry with player object
                     self.player_dict[player.national_chess_identifier] = player
 
-        except json.JSONDecodeError as error:
+        except json.JSONDecodeError:
             # In case of empty file, we return the empty player list
-            print(error)
+            pass
         except FileNotFoundError:
             print(f'fichier {self.file_path} inexistant')
 
