@@ -1,4 +1,5 @@
 # coding: utf-8
+import sys
 
 from models.json_file import ProgramData
 
@@ -56,3 +57,6 @@ class MenuController:
             self.reports_controller.run_player_list_report()
         elif menu_choice == 3:
             self.reports_controller.run_tournament_list_report()
+        elif menu_choice == 9:
+            self.menu_view.confirm_system_exit()
+            sys.exit()

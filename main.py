@@ -1,4 +1,5 @@
 # coding: utf-8
+import sys
 
 from controllers.program_file_c import ControlProgramFile
 from controllers.tournament_c import ControlTournament
@@ -32,7 +33,7 @@ def main():
         control_program_file, reports_view
     )
     tournament_controller = TournamentController(
-        view=view,
+        tournament_view=view,
         round_view=round_view,
         program_file_controls=control_program_file,
         tournament_controls=control_tournament,
@@ -63,9 +64,7 @@ def main():
             )
         )
         main_menu_choice = menu_controller.get_main_menu_choice(program_status)
-        menu_controller.run_main_menu_choice(
-            tournament_controller.program_file, main_menu_choice
-        )
+        menu_controller.run_main_menu_choice(tournament_controller.program_file, main_menu_choice)
 
 
 if __name__ == "__main__":

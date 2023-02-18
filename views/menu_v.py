@@ -30,8 +30,16 @@ class MenuView:
 
         # if empty file the only option is to create a new tournament
         if program_file_empty:
-            input("Appuyez sur entrée pour démarrer un nouveau tournoi\n")
-            result = 0
+            while True:
+                print("Veuillez choisir une option :")
+                option = input("1 - Démarrer un nouveau tournoi \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 0
+                    break
+                elif option == "q":
+                    result = 9
+                    break
         # if ongoing_tournament but no existing report data the only option
         # is to carry-on with the tournament
         elif ongoing_tournament and not existing_report_data:
@@ -42,24 +50,28 @@ class MenuView:
         # if existing tournament and player data -> 2 report options
         elif not ongoing_tournament and existing_tournament_data and \
                 existing_player_data:
-            while option not in [str(1), str(2), str(3)]:
+            while True:
                 print("Veuillez choisir une option :")
                 option = input("1 - Démarrer un nouveau tournoi \n"
                                "2 - Consulter la liste des joueurs inscrits "
                                "dans la base des données \n"
-                               "3 - Consulter la liste des tournois \n")
-                try:
-                    if int(option) == 1:
-                        result = 0
-                    elif int(option) == 2:
-                        result = 2
-                    elif int(option) == 3:
-                        result = 3
-                except ValueError:
-                    pass
+                               "3 - Consulter la liste des tournois \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 0
+                    break
+                elif option == "2":
+                    result = 2
+                    break
+                elif option == "3":
+                    result = 3
+                    break
+                elif option == "q":
+                    result = 9
+                    break
 
         # if ongoing tournament -> carry-on
-        # existing player data and existing tournament data -> 2 report options
+        # if existing player data and existing tournament data -> 2 report options
         elif ongoing_tournament and existing_tournament_data and \
                 existing_player_data:
             while option not in [str(1), str(2), str(3)]:
@@ -67,16 +79,21 @@ class MenuView:
                 option = input("1 - Continuer le tournoi en cours \n"
                                "2 - Consulter la liste des joueurs "
                                "inscrits dans la base des données \n"
-                               "3 - Consulter la liste des tournois \n")
-                try:
-                    if int(option) == 1:
-                        result = 1
-                    elif int(option) == 2:
-                        result = 2
-                    elif int(option) == 3:
-                        result = 3
-                except ValueError:
-                    pass
+                               "3 - Consulter la liste des tournois \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 1
+                    break
+                elif option == "2":
+                    result = 2
+                    break
+                elif option == "3":
+                    result = 3
+                    break
+                elif option == "q":
+                    result = 9
+                    break
+
         # if ongoing tournament -> carry-on
         # if not existing tournament data -> 1 report option
         elif ongoing_tournament and not existing_tournament_data and \
@@ -84,28 +101,34 @@ class MenuView:
             while option not in [str(1), str(2)]:
                 print("Veuillez choisir une option :")
                 option = input("1 - Continuer le tournoi en cours \n"
-                               "2 - Consulter la liste des joueurs inscrits dans la base des données \n")
-                try:
-                    if int(option) == 1:
-                        result = 1
-                    elif int(option) == 2:
-                        result = 2
-                except ValueError:
-                    pass
+                               "2 - Consulter la liste des joueurs inscrits dans la base des données \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 1
+                    break
+                elif option == "2":
+                    result = 2
+                    break
+                elif option == "q":
+                    result = 9
+                    break
         # if ongoing tournament -> carry-on if not existing data plater -> 1 report option
         elif ongoing_tournament and existing_tournament_data and not \
                 existing_player_data:
             while option not in [str(1), str(3)]:
                 print("Veuillez choisir une option :")
                 option = input("1 - Continuer le tournoi en cours \n"
-                               "3 - Consulter la liste des tournois \n")
-                try:
-                    if int(option) == 1:
-                        result = 1
-                    elif int(option) == 3:
-                        result = 3
-                except ValueError:
-                    pass
+                               "3 - Consulter la liste des tournois \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 1
+                    break
+                elif option == "3":
+                    result = 3
+                    break
+                elif option == "q":
+                    result = 9
+                    break
         # if no ongoing tournament -> create new tournament
         # if no tournament data -> 1 report option
         elif not ongoing_tournament and not existing_tournament_data and \
@@ -113,14 +136,17 @@ class MenuView:
             while option not in [str(1), str(2)]:
                 print("Veuillez choisir une option :")
                 option = input("1 - Démarrer un nouveau tournoi \n"
-                               "2 - Consulter la liste des joueurs inscrits dans la base des données \n")
-                try:
-                    if int(option) == 1:
-                        result = 0
-                    elif int(option) == 2:
-                        result = 2
-                except ValueError:
-                    pass
+                               "2 - Consulter la liste des joueurs inscrits dans la base des données \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 0
+                    break
+                elif option == "2":
+                    result = 2
+                    break
+                elif option == "q":
+                    result = 9
+                    break
         # if no ongoing tournament -> create new tournament
         # if no player data -> 1 report option
         elif not ongoing_tournament and existing_tournament_data and not \
@@ -128,13 +154,20 @@ class MenuView:
             while option not in [str(1), str(3)]:
                 print("Veuillez choisir une option :")
                 option = input("1 - Démarrer un nouveau tournoi \n"
-                               "3 - Consulter la liste des tournois \n")
-                try:
-                    if int(option) == 1:
-                        result = 0
-                    elif int(option) == 3:
-                        result = 3
-                except ValueError:
-                    pass
+                               "3 - Consulter la liste des tournois \n"
+                               "q - Quitter le programme\n")
+                if option == "1":
+                    result = 0
+                    break
+                elif option == "3":
+                    result = 3
+                    break
+                elif option == "q":
+                    result = 9
+                    break
 
         return result
+
+    @staticmethod
+    def confirm_system_exit():
+        print("\nFermeture du logiciel réussie")
