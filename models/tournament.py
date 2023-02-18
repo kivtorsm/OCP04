@@ -1,140 +1,67 @@
 # coding: utf-8
 
-import os
 import json
 
-from json_file import MyEncoder
-from round import Round
-from match import Match
+from models.round import Round
+from models.player_in_tournament import PlayerInTournament
 
 
 class Tournament:
     """"
     Player list contained in JSON file
     """
-    def __init__(self, name, place, start_date, end_date, description, rounds=4):
+
+    def __init__(
+            self,
+            name,
+            place,
+            start_date,
+            end_date,
+            description,
+            player_list=None,
+            player_dict=None,
+            rounds=4,
+            status="signing-in players", current_round=0):
 
         self.name = name
         self.place = place
         self.start_date = start_date
         self.end_date = end_date
         self.total_rounds = rounds
-        self.current_round = 0
+        self.status = status
+        self.current_round = current_round
         self.description = description
         self.round_list = []
         for round_number in range(self.total_rounds):
             tournament_round = Round(round_number + 1)
             self.round_list.append(tournament_round)
-        self.player_dict = {}
-        self.file_path = os.path.abspath(f"../data/{self.name}.json")
-        # TODO : adapt depending on execution
+        self.player_list = player_list if player_list else []
+        self.player_dict = player_dict if player_dict else {}
 
     def __str__(self):
-        with open(self.file_path, "r") as file:
-            data = json.load(file)
-        return json.dumps(data, default=lambda o: o.__dict__, indent=4)
-
-    def to_json(self):
-        """
-        Returns tournament object as a json string
-        :return: tournament object as a json str
-        :rtype: str
-        """
         return json.dumps(self, default=lambda o: o.__dict__, indent=4)
 
     def increase_round_number(self):
         """
         Increases the current round count
         :return: None
-        :rtype: Nonve
+        :rtype:
         """
-        self.current_round =+ 1
+        self.current_round += 1
 
-    def erase_file_data(self):
-        """
-        Erases tournament json file data
-        :return: None
-        :rtype: None
-        """
-        with open(self.file_path, 'w'):
-            pass
-
-    def write_json_file(self):
-        """
-        Updates json tournament file
-        :return: None
-        :rtype: None
-        """
-        try:
-            with open(self.file_path, "r+") as file:
-                json.dump(self, file, indent=4, cls=MyEncoder)
-        except json.JSONDecodeError:
-            print("problème avec le fichier player.json")
-        except FileNotFoundError:
-            print(f'fichier {self.file_path} inexistant')
-
-    def sign_in_player(self, player):
+    def sign_in_player(self, national_chess_identifier: str):
         """
         Signs-in the tournament a given player
-        :param player: player to be signed-in the tournament
-        :type player: player
+        :param national_chess_identifier: national chess identifier of the
+        player to be signed-in
+        :type national_chess_identifier: str
         :return: None
-        :rtype: None
+        :rtype:
         """
-        self.add_player_to_player_dict(player)
-        self.write_json_file()
-
-    def get_data_from_json_file(self):
-        """
-        Updates tournament object with json file data and returns it as an object
-        :return: file_data
-        :rtype: dict
-        """
-        try:
-            with open(self.file_path, "r") as file:
-                file_data = json.load(file)
-                self.name = file_data['name']
-                self.place = file_data['place']
-                self.start_date = file_data['start_date']
-                self.end_date = file_data['end_date']
-                self.total_rounds = file_data['total_rounds']
-                self.current_round = file_data['current_round']
-                self.description = file_data['description']
-                self.round_list = []
-                for json_round in file_data['round_list']:
-                    # Get round number for each item of the round list
-                    round_number = json_round['round_number']
-                    # Initialise round object for each item of the round list
-                    tournament_round = Round(round_number + 1)
-                    # Set object attributes
-                    tournament_round.name = json_round['name']
-                    tournament_round.start_datetime = json_round['start_datetime']
-                    tournament_round.end_datetime = json_round['end_datetime']
-                    # For each match in the json file create object Match and append to match list
-                    for json_match in json_round['match_list']:
-                        match = Match(json_match[0], json_match[1])
-                        tournament_round.match_list.append(match)
-                    # Append round to round list in tournament
-                    self.round_list.append(tournament_round)
-                self.player_dict = file_data['player_dict']
-            return file_data
-        except json.JSONDecodeError:
-            # In case of empty file, we return the empty player list
-            print('fichier vide')
-            return None
-        except FileNotFoundError:
-            print(f'fichier {self.file_path} inexistant')
-            return None
-
-    def add_player_to_player_dict(self, player):
-        """
-        Adds player to the tournament player dict
-        :param player: player to be added to the tournament
-        :type player: player
-        :return: None
-        :rtype: None
-        """
-        self.player_dict[player.national_chess_identifier] = player
+        self.player_list.append(national_chess_identifier)
+        player_in_tournament = PlayerInTournament(national_chess_identifier)
+        self.player_dict[player_in_tournament.national_chess_identifier] \
+            = player_in_tournament
 
     def get_number_of_players(self):
         """
@@ -142,7 +69,7 @@ class Tournament:
         :return: Number of signed-in players
         :rtype: int
         """
-        return len(self.player_dict)
+        return len(self.player_list)
 
     def get_number_of_rounds(self):
         """
@@ -159,7 +86,7 @@ class Tournament:
         :return: number of players
         :rtype: int
         """
-        return int(self.get_number_of_players()/2)
+        return int(self.get_number_of_players() / 2)
 
     def get_player_list(self):
         """
@@ -167,9 +94,7 @@ class Tournament:
         :return: list of signed-in players
         :rtype: list
         """
-        # self.get_player_dict_from_json()
-        player_list = list(self.player_dict.keys())
-        return player_list
+        return self.player_list
 
     def get_round_list(self):
         """
@@ -177,49 +102,107 @@ class Tournament:
         :return: list of rounds to be played in the tournament
         :rtype: list
         """
-        self.get_data_from_json_file()
         return self.round_list
 
-    def update_json_round_match_list(self, round_number, match_list):
+    def set_round_match_list(self, match_list):
         """
-        Updates the list of matches of a given round with a new given list of matches
-        :param round_number: the round number where to update the list of matches
-        :type round_number: int
-        :param match_list: the updated list of matches to set in the round match list
+        Updates the list of matches of a given round with a new given
+        list of matches
+        :param match_list: the updated list of matches to set in the
+        round match list
         :type match_list: list
-        :return: None
+        :return: No return
         :rtype: None
         """
-        self.get_data_from_json_file()
         # create round object
-        tournament_round = Round(round_number)
-        # update round with json data
-        tournament_round.initialize_match_list(self, match_list)
+        current_round = self.current_round
+        tournament_round = self.round_list[current_round-1]
+        # update round match list
+        tournament_round.match_list = match_list
         # update tournament with round object
-        self.round_list[round_number-1] = tournament_round
-        # update json file
-        self.write_json_file()
+        self.round_list[current_round - 1] = tournament_round
 
-    def get_round(self, round_number):
+    def get_round(self, round_number) -> Round:
         """
         Returns a given round data
         :param round_number: number of the round for which to get the data
         :type round_number: int
         :return: round data
-        :rtype: dict
+        :rtype: Round
         """
-        tournament_round = self.round_list[round_number-1]
+        tournament_round = self.round_list[round_number - 1]
         return tournament_round
 
-    def get_round_match_list(self, round_number):
+    def get_round_match_list(self, round_number) -> list:
         """
         Returns the match list from a specific round
-        :param round_number: the round number for which we want the list of matches
+        :param round_number: the round number for which we want the list
+        of matches
         :type round_number: int
         :return: list of matches for a specified round
         :rtype: list
         """
-        tournament_round = Round(round_number)
-        match_list = tournament_round.get_match_list(self, round_number)
-        return match_list
+        tournament_round = self.round_list[round_number - 1]
+        return tournament_round.match_list
 
+    def set_status_running(self):
+        """
+        Sets tournament status to running
+        :return: nothing
+        :rtype:
+        """
+        self.status = "running"
+
+    def set_round_start_time(self):
+        """
+        Sets round start time to the current time
+        :return: nothing
+        :rtype:
+        """
+        current_round = self.get_round(self.current_round)
+        current_round.set_start_time()
+        self.round_list[self.current_round - 1] = current_round
+
+    def set_round_end_time(self):
+        """
+        Sets round end time to the current time
+        :return: nothing
+        :rtype:
+        """
+        current_round_number = self.current_round
+        current_round = self.get_round(current_round_number)
+        current_round.set_end_time()
+        self.round_list[self.current_round - 1] = current_round
+
+    def get_player_in_tournament(self, national_chess_identifier: str) \
+            -> PlayerInTournament:
+        """
+        Returns tournament player data
+        :param national_chess_identifier: national chess ID of the player
+        :type national_chess_identifier: str
+        :return: player data in tournament
+        :rtype: PlayerInTournament
+        """
+        player_in_tournament = self.player_dict[national_chess_identifier]
+        return player_in_tournament
+
+    def get_status_in_french(self) -> dict:
+        """
+        Translates tournament status into French
+        :return: tournament status translated in French
+        :rtype: str
+        """
+        status_dict = {
+            "signing-in players": "Inscriptions joueurs",
+            "running": "En cours",
+            "finished": "Fini"
+        }
+        return status_dict[self.status]
+
+    def get_player_dict(self) -> dict:
+        """
+        Returns player dict from the tournament
+        :return: player dict of the tournament
+        :rtype: dict
+        """
+        return self.player_dict
