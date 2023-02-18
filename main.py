@@ -1,5 +1,4 @@
 # coding: utf-8
-import sys
 
 from controllers.program_file_c import ControlProgramFile
 from controllers.tournament_c import ControlTournament
