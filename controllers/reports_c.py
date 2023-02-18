@@ -52,8 +52,8 @@ class ReportsController:
                     player.birth_date
                 ]
             )
-        table.get_string(sortby="Nom")
-        return table
+        return table.get_string(sortby="# ID échecs")
+
 
     def create_tournament_list_table(self) -> PrettyTable:
         """
@@ -114,7 +114,7 @@ class ReportsController:
                     player.score
                 ]
             )
-        return table
+        return table.get_string(sortby="# ID échecs")
 
     @staticmethod
     def create_match_list_table(tournament_round: Round):
