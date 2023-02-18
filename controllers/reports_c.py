@@ -52,7 +52,7 @@ class ReportsController:
                     player.birth_date
                 ]
             )
-        return table.get_string(sortby="# ID échecs")
+        return table
 
 
     def create_tournament_list_table(self) -> PrettyTable:
@@ -114,7 +114,7 @@ class ReportsController:
                     player.score
                 ]
             )
-        return table.get_string(sortby="# ID échecs")
+        return table
 
     @staticmethod
     def create_match_list_table(tournament_round: Round):
@@ -168,21 +168,28 @@ class ReportsController:
         else:
             # get the tournament list
             tournament_list = self.program_file.get_tournament_list()
+
             # get the tournament # in te position # - 1
             tournament = tournament_list[choice - 1]
+
             # get tournament round list
             tournament_round_list = tournament.get_round_list()
             match_table_list = []
-            # for each round, generate a PrettyFormat table with the match
-            # data and append it to a list of match tables
+
+            # for each round, generate a PrettyFormat table with the match data and append it to a list of match tables
             for tournament_round in tournament_round_list:
+
                 # generate PrettyFormat match table
                 match_table = self.create_match_list_table(tournament_round)
+
                 # append table to match table list
                 match_table_list.append(match_table)
 
+            # generate the tournament player list for the ranking
+            tournament_player_list = self.create_tournament_player_list_table(tournament)
+
             # show tournament details report
-            self.reports_view.show_tournament(tournament, match_table_list)
+            self.reports_view.show_tournament(tournament, match_table_list, tournament_player_list)
 
     def run_player_list_report(self):
         """
@@ -191,7 +198,7 @@ class ReportsController:
         :rtype:
         """
         player_table = self.create_player_list_table()
-        self.reports_view.show_player_list(player_table)
+        self.reports_view.show_player_list_alphabetically(player_table)
 
     def run_tournament_list_report(self):
         """

@@ -10,17 +10,6 @@ class ReportsView:
     Reports module view
     """
     @staticmethod
-    def print_table(table: PrettyTable):
-        """
-        Prints a table given in parameters
-        :param table: table to be printed given
-        :type table: PrettyTable
-        :return: No return
-        :rtype: Empty
-        """
-        print(table)
-
-    @staticmethod
     def show_round_data(tournament_round: Round):
         """
         Prints round data
@@ -62,9 +51,11 @@ class ReportsView:
                       "nombre de tournois affichés")
         return result
 
-    def show_tournament(self, tournament: Tournament, match_table_list: list):
+    def show_tournament(self, tournament: Tournament, match_table_list: list, tournament_player_table: PrettyTable):
         """
         Prints tournament details with all round details and math lists.
+        :param tournament_player_table: tournament player table for showing the tournament ranking
+        :type tournament_player_table:
         :param tournament: tournament to be shown
         :type tournament: Tournament
         :param match_table_list: list of tables with all matches for each round
@@ -72,7 +63,9 @@ class ReportsView:
         :return: no return
         :rtype:
         """
-        print("\n" + "=" * 3 + "TOURNAMENT DETAILS" + "=" * 3)
+        # Print tournament data
+
+        print("\n" + "=" * 3 + "DÉTAILS DU TOURNOI" + "=" * 3)
         print(f"Nom : {tournament.name}")
         print(f"Lieu : {tournament.place}")
         print(f"Dates : du {tournament.start_date} au {tournament.end_date}")
@@ -81,13 +74,22 @@ class ReportsView:
 
         round_list = tournament.get_round_list()
 
+        # Print ranking
+        print("\n" + ">" * 3 + "CLASSEMENT" + "<" * 3)
+        self.show_player_list_by_score(tournament_player_table)
+
+        # For each tournament round
         for tournament_round in round_list:
+
+            # print round data
             self.show_round_data(tournament_round)
-            print("\n")
-            self.print_table(
+
+            # print match table
+            print(
                 match_table_list[round_list.index(tournament_round)])
 
-    def show_tournament_list(self, tournament_table: PrettyTable):
+    @staticmethod
+    def show_tournament_list(tournament_table: PrettyTable):
         """
         Prints the list of tournaments in the database as a table.
         :param tournament_table: table containing the list of tournaments
@@ -96,15 +98,26 @@ class ReportsView:
         :return: None
         :rtype:
         """
-        self.print_table(tournament_table)
+        print(tournament_table)
 
-    def show_player_list(self, player_table: PrettyTable):
+    @staticmethod
+    def show_player_list_alphabetically(player_table: PrettyTable):
         """
-        Prints the list of players in the database as a table.
-        :param player_table: table containing the list of tournaments
-        formatted for printing
+        Prints the list of players in the database as a table sorted alphabetically
+        :param player_table: table containing the list of tournaments formatted for printing
         :type player_table: PrettyTable
         :return: None
         :rtype:
         """
-        self.print_table(player_table)
+        print(player_table.get_string(sortby='# ID échecs'))
+
+    @staticmethod
+    def show_player_list_by_score(player_table: PrettyTable):
+        """
+        Prints the list of players in the database as a table sorted by score (ranking table)
+        :param player_table: table containing the list of tournaments formatted for printing
+        :type player_table: PrettyTable
+        :return: None
+        :rtype:
+        """
+        print(player_table.get_string(sortby='Score', reversesort=True))
