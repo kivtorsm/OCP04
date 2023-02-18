@@ -175,3 +175,14 @@ class TournamentView:
         """
         print(f"Le joueur {national_chess_identifier} "
               f"est déjà inscrit au tournoi")
+
+    @staticmethod
+    def show_player_sign_in_confirmation(national_chess_identifier: str):
+        """
+        Prints message confirming that the player has been signed-in the tournament
+        :param national_chess_identifier: player national_chess_identifier to be printed in the message
+        :type national_chess_identifier: str
+        :return: None
+        :rtype:
+        """
+        print(f"\nLe joueur {national_chess_identifier} a bien été inscrit au tournoi")

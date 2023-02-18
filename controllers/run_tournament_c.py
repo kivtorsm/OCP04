@@ -21,7 +21,7 @@ class TournamentController:
     """
 
     def __init__(self,
-                 view: TournamentView,
+                 tournament_view: TournamentView,
                  round_view: RoundView,
                  program_file_controls: ControlProgramFile,
                  tournament_controls: ControlTournament,
@@ -32,7 +32,7 @@ class TournamentController:
                  ):
 
         # views
-        self.view = view
+        self.tournament_view = tournament_view
         self.round_view = round_view
         self.reports_view = reports_v
 
@@ -55,7 +55,7 @@ class TournamentController:
         :return: nothing
         :rtype:
         """
-        tournament_data = self.view.prompt_for_tournament_creation()
+        tournament_data = self.tournament_view.prompt_for_tournament_creation()
         tournament = Tournament(
             tournament_data['name'],
             tournament_data['place'],
@@ -79,7 +79,7 @@ class TournamentController:
         while not national_chess_identifier_correct:
             try:
                 national_chess_identifier \
-                    = self.view.prompt_for_national_chess_identifier()
+                    = self.tournament_view.prompt_for_national_chess_identifier()
                 assert len(national_chess_identifier) == 7
                 alpha = national_chess_identifier[:2]
                 numeric = national_chess_identifier[2:]
@@ -109,11 +109,12 @@ class TournamentController:
                 program_file, national_chess_identifier)
         if is_already_signed_in:
             # Check if the player is already signed-in the tournament
-            self.view.show_player_already_signed_in(national_chess_identifier)
+            self.tournament_view.show_player_already_signed_in(national_chess_identifier)
+
         else:
             if not is_player_in_database:
                 # ask for player data input
-                player_data = self.view.prompt_for_player_data()
+                player_data = self.tournament_view.prompt_for_player_data()
                 player = Player(
                     first_name=player_data['first_name'],
                     last_name=player_data['last_name'],
@@ -124,13 +125,15 @@ class TournamentController:
                 self.program_file_controls.add_player(player, program_file)
 
             # Sign-in player to ongoing tournament and update program file
-            self.tournament_controls.sign_in_player(
-                program_file, national_chess_identifier)
+            self.tournament_controls.sign_in_player(program_file, national_chess_identifier)
+
+            # Confirm player sign-in
+            self.tournament_view.show_player_sign_in_confirmation(national_chess_identifier)
 
         # Ask if user wants to add another player
         input_add_new_player = "c"
         while input_add_new_player != "y" and input_add_new_player != "n":
-            input_add_new_player = self.view.prompt_for_new_player()
+            input_add_new_player = self.tournament_view.prompt_for_new_player()
             if input_add_new_player == "y":
                 add_new_player = True
                 return add_new_player
@@ -159,9 +162,9 @@ class TournamentController:
 
                 # Different menu depending on the evaluation of minimum number of players et total players = even
                 if not enough_players or not even_number_of_players:
-                    option = self.view.prompt_for_new_player_options()
+                    option = self.tournament_view.prompt_for_new_player_options()
                 else:
-                    option = self.view.prompt_for_running_tournament_options()
+                    option = self.tournament_view.prompt_for_running_tournament_options()
 
                 if int(option) == 1:
                     run_tournament = False
