@@ -27,6 +27,10 @@ def main():
     control_tournament = ControlTournament()
     control_round = ControlRound(round_view)
     control_tournament_player = ControlTournamentPlayer()
+    reports_view = ReportsView()
+    reports_controller = ReportsController(
+        control_program_file, reports_view
+    )
     tournament_controller = TournamentController(
         view=view,
         round_view=round_view,
@@ -34,16 +38,15 @@ def main():
         tournament_controls=control_tournament,
         round_controls=control_round,
         tournament_player_controls=control_tournament_player,
+        reports_v=reports_view,
+        reports_c=reports_controller
     )
 
     tournament_controller.program_file = (
         tournament_controller.program_file_controls.charge_program_file()
     )
 
-    reports_view = ReportsView()
-    reports_controller = ReportsController(
-        tournament_controller.program_file, control_program_file, reports_view
-    )
+    reports_controller.set_program_file(tournament_controller.program_file)
 
     menu_view = MenuView()
 

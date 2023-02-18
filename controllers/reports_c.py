@@ -16,9 +16,9 @@ class ReportsController:
     """
     def __init__(
             self,
-            program_file: ProgramData,
             program_file_control: ControlProgramFile,
-            reports_view: ReportsView):
+            reports_view: ReportsView,
+            program_file=None):
 
         # Models
         self.program_file = program_file
@@ -28,6 +28,16 @@ class ReportsController:
 
         # views
         self.reports_view = reports_view
+
+    def set_program_file(self, program_file: ProgramData):
+        """
+        program file update after cross initializations
+        :param program_file: program file in which program data is saved
+        :type program_file: ProgramData
+        :return: nothing
+        :rtype:
+        """
+        self.program_file = program_file
 
     def create_player_list_table(self) -> PrettyTable:
         """

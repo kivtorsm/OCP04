@@ -8,9 +8,11 @@ from controllers.program_file_c import ControlProgramFile
 from controllers.tournament_c import ControlTournament
 from controllers.round_c import ControlRound
 from controllers.tournament_player_c import ControlTournamentPlayer
+from controllers.reports_c import ReportsController
 
 from views.tournament_v import TournamentView
 from views.round_v import RoundView
+from views.reports_v import ReportsView
 
 
 class TournamentController:
@@ -24,18 +26,22 @@ class TournamentController:
                  program_file_controls: ControlProgramFile,
                  tournament_controls: ControlTournament,
                  round_controls: ControlRound,
-                 tournament_player_controls: ControlTournamentPlayer
+                 tournament_player_controls: ControlTournamentPlayer,
+                 reports_c: ReportsController,
+                 reports_v: ReportsView
                  ):
 
         # views
         self.view = view
         self.round_view = round_view
+        self.reports_view = reports_v
 
         # controllers
         self.program_file_controls = program_file_controls
         self.tournament_controls = tournament_controls
         self.round_controls = round_controls
         self.tournament_player_controls = tournament_player_controls
+        self.reports_controller = reports_c
 
         # models
         self.program_file = None
@@ -175,6 +181,10 @@ class TournamentController:
             elif tournament.status == "running":
                 self.play_tournament(program_file)
             else:
+                print("Tournoi fini !"
+                      "\nCLASSEMENT :")
+                tournament_player_list = self.reports_controller.create_tournament_player_list_table(tournament)
+                self.reports_view.show_player_list_by_score(tournament_player_list)
                 break
 
     def play_current_round(self, program_file: ProgramData):
