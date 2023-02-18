@@ -64,7 +64,6 @@ class ReportsController:
             )
         return table
 
-
     def create_tournament_list_table(self) -> PrettyTable:
         """
         Creates and returns a list of tournaments in printing format
